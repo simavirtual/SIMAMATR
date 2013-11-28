@@ -305,6 +305,17 @@ FUNCTION Matri_405(aParam1,aParam2,aParam3)
 	    @ nNroFil,aNroCol[3] SAY cNombreTes
 **********FIN VALIDACION DEL CODIGO
 
+
+**********ANALISIS DE DECISION
+	    IF EMPTY(&cNalias->dFecNacEst) .AND. EMPTY(&cNalias->cLugNacEst) .AND.;
+	       ANO->lMtrResAno
+
+	       cError(cNombreTes+' LE FALTA REGISTRARLE SUS DATOS PERSONALES')
+	       LOOP
+	    ENDIF
+**********FIN ANALISIS DE DECISION
+
+
 **********LECTURA DE LOS CONTRATANTES
 	    cSavPan := SAVESCREEN(0,0,24,79)
 	    i := 1

@@ -510,6 +510,8 @@ FUNCTION Matr_6354(aParam1,aParam2,aParam3)
 			    cNomEmp,cAnoUsr,cJorTxt,cCodIso)
 	       *ÀHoja de Matr¡cula. Distrito La Salle. Bogota
 
+
+
 	    CASE ANO->nTipMtrAno == 5
 		 HojaMatr05(ADM->cCodigoEst,;
 			    lNuevos,;
@@ -524,6 +526,8 @@ FUNCTION Matr_6354(aParam1,aParam2,aParam3)
 			    ADM->cDireccEst,;
 			    ADM->cBarrioEst,;
 			    ADM->cTelefnEst,;
+			    ADM->cTelCelEst,;
+			    ADM->cMaiEstEst,;
 			    ALLTRIM(ADM->cNomPadEst)+' '+;
 			    ALLTRIM(ADM->cApePadEst),;
 			    ADM->cPadNitEst,;
@@ -532,8 +536,6 @@ FUNCTION Matr_6354(aParam1,aParam2,aParam3)
 			    ADM->cEmpPadEst,;
 			    ADM->cCarPadEst,;
 			    ADM->cTelPadEst,;
-			    ADM->cTelCelEst,;
-			    ADM->cMaiEstEst,;
 			    ADM->cDirPadEst,;
 			    ADM->cCelPadEst,;
 			    ALLTRIM(ADM->cNomMadEst)+' '+;
