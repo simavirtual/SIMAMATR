@@ -1,14 +1,14 @@
 /* SIMA - MATRICULA ACADEMICA
 
 MODULO      : ACTUALIZAR
-SUBMODULO...: EMAILS
+SUBMODULO...: INFORMACION PERSONAL                     MODULO No. 641
 
 **************************************************************************
-* TITULO ..: ACTUALIZACION DEL DIRECTORIO DE EMAILS                      *
+* TITULO ..: ACTUALIZACION DEL DIRECTORIO DE ESTUDIANTES                 *
 **************************************************************************
 
-AUTOR: Nelson Fern ndez G¢mez       INICIO: 11:45 AM  MAR 16/2009 LUN
-       Colombia, Bucaramanga        FINAL : 11:50 AM  MAR 16/2009 LUN
+AUTOR: Nelson Fern ndez G¢mez       FECHA DE CREACION: DIC 11/96 MIE A
+       Colombia, Bucaramanga        INICIO: 09:40 AM   DIC 11/96 MIE
 
 
 REQUERIMIENTOS:
@@ -17,7 +17,7 @@ REQUERIMIENTOS:
 
 OBJETIVOS:
 
-1- Permite actualizar los datos personales de los estudiantes matr¡culados
+1- Permite actualizar los datos de los padres del estudiante.
 
 2- Retorna NIL
 
@@ -43,6 +43,8 @@ FUNCTION Matri_643(aParam1,aParam2,aParam3)
        LOCAL lHayErr := .F.                 // .T. Hay Error
        LOCAL lAnoAct := .T.                 // A¤o Actual
 
+       LOCAL       i := 0                   // Contador
+       LOCAL cNalias := ''                  // Alias del maestro
        LOCAL cSavLin := ''                  // Salvar linea
        LOCAL aTitulo := {}                  // Titulos de las Columnas
        LOCAL aTamCol := {}                  // Tama¤o de las Columnas
@@ -126,7 +128,10 @@ FUNCTION Matri_643(aParam1,aParam2,aParam3)
 *>>>>FIN LECTURA PARAMETROS GENERALES
 
 *>>>>SELECCION DE LAS AREAS DE TRABAJO
-       IF !lUseMaeMtr(lShared,PathUno+'\'+cPatSis,cMaeAlu,cAnoSis)
+       IF !lUseMaeMtr(lShared,PathUno+'\'+cPatSis,cMaeAlu,cAnoSis) .OR.;
+	  !lUseDbf(.T.,PathUno+'\'+PathSis+'\'+FilePer,'PER',NIL,lShared) .OR.;
+	  !lUseDbf(.T.,cPatSis+'\'+fMtrAno+cAnoUsr+ExtFile,'ANO',NIL,lShared) .OR.;
+	  !lUseDbf(.T.,cPatSis+'\'+FileSib,'SIB',NIL,lShared)
 	  cError('ABRIENDO ARCHIVOS')
 	  CLOSE ALL
 	  RETURN NIL
@@ -142,30 +147,31 @@ FUNCTION Matri_643(aParam1,aParam2,aParam3)
        @ nNroFil,nNroCol SAY cMsgTxt
 *>>>>FIN IMPRESION DE LOS ENCABEZADOS
 
-*>>>>GRABACION DE LOS ESTUDIANTES
+*>>>>GRABACION DE LOS BECADOS
        nNroFil++
        DO WHILE .T.
 
 **********LECTURA DEL CODIGO DEL ESTUDIANTE
 	    cSavLin := SAVESCREEN(nNroFil,00,nNroFil,79)
 	    cCodigoTes := cLeeCodEst(nNroFil,aNroCol[1],cMaeAlu,@cMaeAct)
+	       cNalias := cMaeAct
+
 	    IF EMPTY(cCodigoTes) .OR. EMPTY(cMaeAct)
 	       EXIT
 	    ENDIF
-	    cNombreTes := RTRIM(&cMaeAct->cApelliEst)+' '+;
-			  RTRIM(&cMaeAct->cNombreEst)
+	    cNombreTes := RTRIM(&cNalias->cApelliEst)+' '+;
+			  RTRIM(&cNalias->cNombreEst)
 	    cNombreTes := ALLTRIM(SUBS(cNombreTes+SPACE(50),1,50))
-	    @ nNroFil,aNroCol[2] SAY &cMaeAct->cCodigoGru
+	    @ nNroFil,aNroCol[2] SAY &cNalias->cCodigoGru
 	    @ nNroFil,aNroCol[3] SAY cNombreTes
 **********FIN LECTURA DEL CODIGO DEL ESTUDIANTE
 
-**********ACTUALIZACION DE LA INFORMACION
+**********ACTUALIZACION DE LA INFORMACION DE LOS PADRES
 	    cSavPan := SAVESCREEN(0,0,24,79)
-	    lEmailsEst(lShared,nFilPal,1,cCodigoTes,;
-		       cNombreTes,;
-		       &cMaeAct->cCodigoGru,cMaeAct)
+	    lDatosEst(lShared,nFilPal,1,cNalias,;
+		      cCodigoTes,cNombreTes,&cNalias->cCodigoGru,2)
 	    RESTSCREEN(0,0,24,79,cSavPan)
-**********FIN ACTUALIZACION DE LA INFORMACION
+**********FIN ACTUALIZACION DE LA INFORMACION DE LOS PADRES
 
 **********INCREMENTO DE LAS FILAS
 	    nNroFil++
@@ -179,7 +185,7 @@ FUNCTION Matri_643(aParam1,aParam2,aParam3)
 		 nNroFil++
 		 SET COLOR TO I
 		 @ nNroFil,aNroCol[1] SAY cCodigoTes
-		 @ nNroFil,aNroCol[2] SAY &cMaeAct->cCodigoGru
+		 @ nNroFil,aNroCol[2] SAY &cNalias->cCodigoGru
 		 @ nNroFil,aNroCol[3] SAY cNombreTes
 		 SET COLOR TO
 
@@ -192,4 +198,4 @@ FUNCTION Matri_643(aParam1,aParam2,aParam3)
        ENDDO
        CLOSE ALL
        RETURN NIL
-*>>>>FIN GRABACION DE LOS ESTUDIANTES
+*>>>>FIN GRABACION DE LOS BECADOS

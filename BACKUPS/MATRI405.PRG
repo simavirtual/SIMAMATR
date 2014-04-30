@@ -126,6 +126,7 @@ FUNCTION Matri_405(aParam1,aParam2,aParam3)
        LOCAL PathCua := ''                  // Path de Integraci¢n Cuatro
      *ÀPath de Integraci¢n
 
+       LOCAL nOpcion := 0                   // N£mero de Opci¢n.
        LOCAL cMaeAlu := ''                  // Maestros habilitados
        LOCAL cMaeAct := ''                  // Maestro Activo
        LOCAL cJorTxt := ''                  // Jornada escogida
@@ -152,17 +153,61 @@ FUNCTION Matri_405(aParam1,aParam2,aParam3)
 *>>>>FIN LECTURA PARAMETROS GENERALES
 
 *>>>>SELECCION DE ALUMNOS NUEVOS O ANTIGUOS
+       nOpcion := nLeeOpcion('CONTRATANTES PARA: '+;
+			     '1<NUEVOS> 2<ANTIGUOS> '+;
+			     '3<A¥OS ANTERIORES 4<ABANDONAR>?',4,'1')
+
+       IF nOpcion == 4
+	  cError('SE ABANDONA EL PROCESO')
+	  CloseAll()
+	  RETURN NIL
+       ENDIF
+
        lNuevos := .F.
-       IF nLeeOpcion('VA GRABAR LOS CONTRATANTES PARA: '+;
-		     '1<NUEVOS> 2<ANTIGUOS>?',2,'1') == 1
+       IF nOpcion == 1
 	  lNuevos := .T.
        ENDIF
 *>>>>FIN SELECCION DE ALUMNOS NUEVOS O ANTIGUOS
 
+*>>>>LECTURA Y VALIDACION DEL A¥O
+       IF nOpcion == 3 // A¥OS ANTERIORES
+
+	  cSavPan := SAVESCREEN(0,0,24,79)
+	  cAnoAnt := SPACE(04)
+	  @ nFilInf+1,nColInf SAY 'A¥O:' GET cAnoAnt PICT '9999'
+	  READ
+	  RESTSCREEN(0,0,24,79,cSavPan)
+
+	  IF EMPTY(cAnoAnt)
+	     cError('SE ABANDONA EL PROCESO')
+	     CloseAll()
+	     RETURN NIL
+	  ENDIF
+
+       ENDIF
+*>>>>FIN LECTURA Y VALIDACION DEL A¥O
+
 *>>>>SELECION DEL A¥O ANTERIOR
-       cAnoAnt := STR((VAL(cAnoUsr)-1),4)
-       cPatAnt := cPatSis
-       cPatAnt := STUFF(cPatAnt,1,4,cAnoAnt)
+       DO CASE
+
+       CASE nOpcion == 1 // ANTIGUOS
+
+	    cAnoAnt := STR((VAL(cAnoUsr)-1),4)
+	    cPatAnt := cPatSis
+	    cPatAnt := STUFF(cPatAnt,1,4,cAnoAnt)
+
+       CASE nOpcion == 2 // ANTIGUOS
+
+	    cAnoAnt := STR((VAL(cAnoUsr)-1),4)
+	    cPatAnt := cPatSis
+	    cPatAnt := STUFF(cPatAnt,1,4,cAnoAnt)
+
+       CASE nOpcion == 3 // A¥OS ANTERIORES
+
+	    cPatAnt := cPatSis
+	    cPatAnt := STUFF(cPatAnt,1,4,cAnoAnt)
+
+       ENDCASE
 *>>>>FIN SELECION DEL A¥O ANTERIOR
 
 *>>>>AREAS DE TRABAJO
@@ -259,6 +304,17 @@ FUNCTION Matri_405(aParam1,aParam2,aParam3)
 	    @ nNroFil,aNroCol[2] SAY &cNalias->cCodigoGru
 	    @ nNroFil,aNroCol[3] SAY cNombreTes
 **********FIN VALIDACION DEL CODIGO
+
+
+**********ANALISIS DE DECISION
+	    IF EMPTY(&cNalias->dFecNacEst) .AND. EMPTY(&cNalias->cLugNacEst) .AND.;
+	       ANO->lMtrResAno
+
+	       cError(cNombreTes+' LE FALTA REGISTRARLE SUS DATOS PERSONALES')
+	       LOOP
+	    ENDIF
+**********FIN ANALISIS DE DECISION
+
 
 **********LECTURA DE LOS CONTRATANTES
 	    cSavPan := SAVESCREEN(0,0,24,79)

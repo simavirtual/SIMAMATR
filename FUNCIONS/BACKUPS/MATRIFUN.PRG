@@ -313,6 +313,7 @@ FUNCTION RevisarDbf(aP1,lShared,nModCry,cCodSui,cNomEmp,cNomSis,;
 	    !FILE(PathSis+'\'+fErrSys) .AND.;
 	    !FILE(PathSis+'\'+FileInf) .AND.;
 	    !FILE(PathSis+'\'+FileIso) .AND.;
+	    !FILE(PathSis+'\'+FileMzp) .AND.;
 	    !FILE(PathSis+'\OrdMtr01.txt')
 
 	    RESTSCREEN(0,0,24,79,cSavPan)
@@ -355,6 +356,12 @@ FUNCTION RevisarDbf(aP1,lShared,nModCry,cCodSui,cNomEmp,cNomSis,;
 	      IF !FILE(PathSis+'\OrdMtr99.txt')
 		 RESTSCREEN(0,0,24,79,cSavPan)
 		 OrdenMtr99(cNomSis,cNomEmp)
+	      ENDIF
+
+
+	      IF !FILE(PathSis+'\'+FileMzp)
+		 RESTSCREEN(0,0,24,79,cSavPan)
+		 RecuDbfMzp(lShared,nModCry,PathSis,FileMzp)
 	      ENDIF
 ************FIN RECUPERACION DE ESTRUCTURAS GENERALES
 
@@ -498,6 +505,9 @@ FUNCTION RevisarDbf(aP1,lShared,nModCry,cCodSui,cNomEmp,cNomSis,;
        nActStrIso(lShared,nModCry,PathSis,FileIso)
      *ÀActualizacion de Archios de documentos a imprimir
 
+       nActStrMzp(lShared,nModCry,PathSis,FileMzp)
+     *ÀActualizacion de Archios de documentos a imprimir
+
        nActStrAno(lShared,cPatSis,fMtrAno+cAnoUsr+ExtFile)
      *ÀActualizaci¢n de Configuraci¢n del A¤o
 
@@ -632,6 +642,9 @@ FUNCTION CreaDbfSys(lShared,nModCry,cNomEmp,cNomSis,cPatSis,;
 
        Termometro(80)
        CreaDbfIso(lShared,nModCry,PathSis,FileIso)
+
+       Termometro(90)
+       CreaDbfMzp(lShared,nModCry,PathSis,FileMzp)
 
        OrdenMtr04(cNomSis,cNomEmp)
        Termometro(100)
@@ -1006,14 +1019,16 @@ FUNCTION aMenusMatr(lShared,nNroOpc,cDerech,aAyudas,cModem)
 			'3<REGISTRAR RECIBOS   >',;
 			'4<'+cModem+'>',;
 			'5<INFORMES FACTURACION>',;
-			'6<CONCEPTOS ALUMNOS   >'}
+			'6<CONCEPTOS ALUMNOS   >',;
+			'7<PAGOS EN LINEA      >'}
 
 	    aAyuda := {'Permite Facturar los recibos de los alumnos nuevos',;
 		       'Permite Facturar los recibos de los alumnos antiguos',;
 		       'Permite indicar la forma de pago de los recibos',;
 		       'Procesa los Movimientos del archivo transferido por Modem ',;
 		       'Permite imprimir los diferentes informes de la Facturaci¢n.',;
-		       'Permite Asignar los Conceptos de Pago Individuales al Estudiante'}
+		       'Permite Asignar los Conceptos de Pago Individuales al Estudiante',;
+		       'Permite generar la facturaci¢n en archivo para los pagos en linea'}
 
        CASE nNroOpc == 6
 
@@ -1519,6 +1534,10 @@ FUNCTION SubMenus(aP1,;
 		 CASE nNroOpc == 6
 		      Matri_506(aP1,aP2,aP3)
 		    *ÀGrabaci¢n de los conceptos a los alumnos
+
+		 CASE nNroOpc == 7
+		      Matri_507(aP1,aP2,aP3)
+		    *ÀPago en Cajeros
 
 		 ENDCASE
 

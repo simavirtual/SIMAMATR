@@ -133,6 +133,7 @@ FUNCTION Matri_705(aParam1,aParam2,aParam3,;
        LOCAL PathW10 := ''                  // Sitio del Sistema No.10
      *ÀSitios del Sistema
 
+       LOCAL PathAlu := ''                  // Paht de Alumno
        LOCAL PathUno := ''                  // Path de Integraci¢n Uno
        LOCAL PathDos := ''                  // Path de Integraci¢n Dos
        LOCAL PathTre := ''                  // Path de Integraci¢n Tres
@@ -441,6 +442,7 @@ FUNCTION Matri_705(aParam1,aParam2,aParam3,;
 **********VALIDACION DEL CODIGO
 	    DO CASE
 	    CASE lNuevos .AND. &cNalias->lRetiroAdm
+
 		 cError(cNombreTes+ 'ESTA RETIRADO')
 		 LOOP
 
@@ -465,9 +467,11 @@ FUNCTION Matri_705(aParam1,aParam2,aParam3,;
 	    @ nNroFil,aNroCol[2] SAY cNombreTes
 	    @ nNroFil,aNroCol[3] SAY SUBS(cCodigoTgr,1,2)
 
-	    IF VAL(SUBS(cCodigoTgr,3,2)) == 0
-	       cError('EL ESTUDIANTE NO TIENE ASIGNADO UN GRUPO')
-	       LOOP
+	    IF ANO->lValGruAno
+	       IF VAL(SUBS(cCodigoTgr,3,2)) == 0
+		  cError('EL ESTUDIANTE NO TIENE ASIGNADO UN GRUPO')
+		  LOOP
+	       ENDIF
 	    ENDIF
 **********FIN ANALISIS DEL GRUPO
 

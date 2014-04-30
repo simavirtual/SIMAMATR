@@ -92,6 +92,9 @@ FUNCTION CreaDbfMtr(lShared,PathMtr,fSimMtr,fNtxMtr,aStrDbf)
 			 {"cCola08Mtr","Character",20,0},;
 			 {"cCola09Mtr","Character",20,0},;
 			 {"cCola10Mtr","Character",20,0},;
+			 {"nPagOnlMtr","Numeric"  ,02,0},; // Formato para pagos en lineas.
+			 {"cCodOnlMtr","Character",36,0},; // C¢digo asignado para pagos en lineas.
+			 {"cCodSerMtr","Character",36,0},; // C¢digo interno asignado por la empresa para clasificar el servicio que se recauda
 			 {"nPruebaMtr'","Numeric" ,02,0}}
 *>>>>FIN DECLARACION DE VARIABLES
 
@@ -499,15 +502,33 @@ FUNCTION oDefBrwMtr(lShared,cAnoUsr,nFilSup,nColSup,nFilInf,nColInf)
        oBrowse:ADDCOLUMN(oColumn)
      *ÀDefinici¢n Columna
 
-       oColumn	     := TBCOLUMNNEW('SERVICIO;FACTURADO', {||MTR->cSerFacMtr})
-       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','MTR'},;
-			 {'FIELD','cSerFacMtr'},{'PICTURE','@!'}}
-       oBrowse:ADDCOLUMN(oColumn)
-     *ÀDefinici¢n Columna
-
        oColumn	     := TBCOLUMNNEW('BANCO;MODEM', {||MTR->cModemMtr})
        oColumn:Cargo := {{'MODI',.T.},{'ALIAS','MTR'},;
 			 {'FIELD','cModemMtr'},{'PICTURE','@!'}}
+       oBrowse:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('FORMATO PARA;PAGOS EN LINEA',{||MTR->nPagOnlMtr})
+       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','MTR'},;
+			 {'FIELD','nPagOnlMtr'},{'PICTURE','99'}}
+       oBrowse:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('CODIGO ASIGNADO;PAGOS EN LINEA',{||MTR->cCodOnlMtr})
+       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','MTR'},;
+			 {'FIELD','cCodOnlMtr'},{'PICTURE','@X'}}
+       oBrowse:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('CODIGO ASIGNADO;SERVICIO PAGOS EN LINEA',{||MTR->cCodSerMtr})
+       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','MTR'},;
+			 {'FIELD','cCodSerMtr'},{'PICTURE','@X'}}
+       oBrowse:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('SERVICIO;FACTURADO', {||MTR->cSerFacMtr})
+       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','MTR'},;
+			 {'FIELD','cSerFacMtr'},{'PICTURE','@!'}}
        oBrowse:ADDCOLUMN(oColumn)
      *ÀDefinici¢n Columna
 

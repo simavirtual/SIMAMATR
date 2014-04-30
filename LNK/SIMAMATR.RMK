@@ -95,6 +95,7 @@
 "$(OBJDIR)\Matr5532.obj" : "$(SISPRG)\Matr5532.prg"
 "$(OBJDIR)\Matri554.obj" : "$(SISPRG)\Matri554.prg"
 "$(OBJDIR)\Matri555.obj" : "$(SISPRG)\Matri555.prg"
+"$(OBJDIR)\Matri556.obj" : "$(SISPRG)\Matri556.prg"
 "$(OBJDIR)\Matri506.obj" : "$(SISPRG)\Matri506.prg"
 "$(OBJDIR)\Matri507.obj" : "$(SISPRG)\Matri507.prg"
 "$(OBJDIR)\Matri601.obj" : "$(SISPRG)\Matri601.prg"

@@ -685,7 +685,9 @@ FUNCTION lHojaVida(lShared,nFilInf,nColInf,cNroIns,;
 
 		   @nNroFil,nNroCol+34 SAY 'FECHA:';
 					 GET dFecNacTes;
-					 VALID !EMPTY(dFecNacTes)
+					 VALID !EMPTY(dFecNacTes);
+					 WHEN {||HelpRead('FECHA MM/DD/AAAA')}
+
 
 		   @nNroFil,nNroCol+53 SAY 'SEXO:';
 					 GET cSexFem;

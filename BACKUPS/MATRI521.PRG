@@ -84,6 +84,7 @@ FUNCTION Matri_521(aParam1,aParam2,aParam3)
        LOCAL aVlrCon := ''                  // Valor de los Conceptos
 *      LOCAL cNalias := ''                  // No se declara por esta Bloque de C¢digo
        LOCAL lPrnGru := .T.                 // Impresi¢n por grupos
+       LOCAL aColMzp := {}                  // Columnas y filas
        LOCAL Getlist := {}                  // Variable del sistema
      *ÀVariables espec¡ficas
 
@@ -184,6 +185,7 @@ FUNCTION Matri_521(aParam1,aParam2,aParam3)
        AADD(aUseDbf,{.T.,PathSis+'\'+FSimMtr,'MTR',NIL,lShared,nModCry})
        AADD(aUseDbf,{.T.,PathSis+'\'+FilePrn,'PRN',NIL,lShared,nModCry})
        AADD(aUseDbf,{.T.,PathSis+'\'+FileIso,'ISO',NIL,lShared,nModCry})
+       AADD(aUseDbf,{.T.,PathSis+'\'+FileMzp,'MZP',NIL,lShared,nModCry})
 
        AADD(aUseDbf,{.T.,cPatSis+'\'+;
 			 fMtrAno+cAnoUsr+ExtFile,'ANO',NIL,lShared,nModCry})
@@ -208,6 +210,8 @@ FUNCTION Matri_521(aParam1,aParam2,aParam3)
 *>>>>FIN SELECCION DE LAS AREAS DE TRABAJO
 
 *>>>>VALIDACION DE CONTENIDOS DE ARCHIVOS
+       aColMzp := aColFilMzp(01)
+
        SELECT &cMaeAct
        lHayErr := .T.
        DO CASE
@@ -232,7 +236,7 @@ FUNCTION Matri_521(aParam1,aParam2,aParam3)
        CASE ANO->(RECCOUNT()) == 0
 	    cError('NO EXISTE CONFIGURACION DE LA MATRICULA PARA EL A¥O')
 
-       CASE ANO->nRecNroAno == 0 .OR. ANO->nRecNroAno > 9
+       CASE ANO->nRecNroAno == 0 .OR. ANO->nRecNroAno > 11
 	    cError('EL RECIBO No.'+STR(ANO->nRecNroAno,2)+;
 		   ' NO ESTA DISPONIBLE. POR FAVOR CAMBIELO')
 
@@ -251,6 +255,9 @@ FUNCTION Matri_521(aParam1,aParam2,aParam3)
 
        CASE TRC->(RECCOUNT()) == 0
 	    cError('NO SE HAN DEFINIDO LOS TIPOS DE RECIBO A FACTURAR')
+
+       CASE ANO->nRecNroAno == 11 .AND. LEN(aColMzp) == 0
+	    cError('NO EXISTEN COLUMNAS Y FILAS PARA LA IMPRESION')
 
        OTHERWISE
 	    lHayErr :=.F.
@@ -722,6 +729,32 @@ FUNCTION Matri_521(aParam1,aParam2,aParam3)
 					      ANO->lPrePrnAno,;
 					      lPrnGru)
 			 *Bethlemitas. Iso
+
+		    CASE ANO->nRecNroAno == 10 .OR. ANO->nRecNroAno == 11
+
+			 nVlrTot := nRecMtr10(lShared,cEmpPal,cNitEmp,;
+					      cNomEmp,cNomUsr,cAnoUsr,;
+					      cJorTxt,;
+					      cCodIso,;
+					      @nNroFac,;
+					      &cMaeAct->cCodigoEst,;
+					      cNombreTes,;
+					      cCodigoTgr,;
+					      BAN->cNombreBan,;
+					      BAN->cNroCtaBan,;
+					      BAN->cLugarBan,;
+					      cConcep,;
+					      ANO->nIntMatAno,;
+					      ANO->dOpoMatAno,;
+					      ANO->dExtMatAno,;
+					      ANO->lExtMatAno,;
+					      ANO->cMensajAno,;
+					      @nVlrMesTpa,;
+					      @aVlrCon,;
+					      13,VAL(TRC->cCodigoTrc),;
+					      lPrnGru,;
+					      ANO->nRecNroAno,aColMzp)
+			 *C¢digo de Barras la Kiosera. La Salle - Descuento
 
 		    ENDCASE
 

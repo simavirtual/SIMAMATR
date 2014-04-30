@@ -1,15 +1,15 @@
-/*SISTEMA DE MATRICULA ACADEMICA
+/* SIMA - MATRICULA ACADEMICA
 
-MODULO      : MATRICULAS
-SUBMODULO...: LISTAS DE CLASE     MODULO No. 691
+MODULO      : ACTUALIZAR
+SUBMODULO...: INFORMACION PERSONAL                     MODULO No. 641
 
 **************************************************************************
-* NOMBRE DEL PROGRAMA..: MATR6341.PRG                                    *
-* TITULO DEL PROGRAMA..: LISTAS DE CLASE PROVISIONALES POR GRUPOS        *
+* TITULO ..: ACTUALIZACION DEL DIRECTORIO DE ESTUDIANTES                 *
 **************************************************************************
 
-AUTOR: Nelson Fern ndez G¢mez       FECHA DE CREACION: FEB 16/99 MAR A
-       Bucaramanga, Colombia	    INICIO: 04:33 PM   FEB 16/99 MAR
+AUTOR: Nelson Fern ndez G¢mez       FECHA DE CREACION: DIC 11/96 MIE A
+       Colombia, Bucaramanga        INICIO: 09:40 AM   DIC 11/96 MIE
+
 
 REQUERIMIENTOS:
 
@@ -17,19 +17,18 @@ REQUERIMIENTOS:
 
 OBJETIVOS:
 
-1- Debe estar en uso el archivos de Nuevos indexado por grupo y apellido
+1- Permite actualizar los datos del acudiente del padre.
 
-2- Permite imprimir las listas de clase provisionales por grupos
-
-3- Retorna Nil
+2- Retorna NIL
 
 SINTAXIS:
+
 
 *------------------------------------------------------------------------*
 *                              PROGRAMA                                  *
 *------------------------------------------------------------------------*/
 
-FUNCTION Matr_6341(aParam1,aParam2,aParam3)
+FUNCTION Matri_644(aParam1,aParam2,aParam3)
 
 *>>>>DESCRIPCION DE PARAMETROS
 /*     aParam1                              // Parametros Generales
@@ -38,19 +37,26 @@ FUNCTION Matr_6341(aParam1,aParam2,aParam3)
 *>>>>FIN DESCRIPCION DE PARAMETROS
 
 *>>>>DECLARACION DE VARIABLES
-       #INCLUDE "ARC-MATR.PRG"      // Archivos del Sistema
+       #INCLUDE "ARC-MATR.PRG"       // Archivos del Sistema
 
        LOCAL cSavPan := ''                  // Salvar Pantalla
        LOCAL lHayErr := .F.                 // .T. Hay Error
        LOCAL lAnoAct := .T.                 // A¤o Actual
 
-       LOCAL nCopias := 1                   // N£meros de copias a imprimir
-       LOCAL nNroCop := 1                   // N£mero de copia
-       LOCAL cCodGru := ''                  // C¢dgio del grupo
+       LOCAL       i := 0                   // Contador
+       LOCAL cNalias := ''                  // Alias del maestro
+       LOCAL cSavLin := ''                  // Salvar linea
+       LOCAL aTitulo := {}                  // Titulos de las Columnas
+       LOCAL aTamCol := {}                  // Tama¤o de las Columnas
+       LOCAL aNroCol := {}                  // N£meros de Columnas
+       LOCAL nNroFil := 0                   // Fila de lectura
+       LOCAL nNroCol := 1                   // Columna de lectura
+       LOCAL cMsgTxt := ''                  // Mensaje Temporal
 
        LOCAL GetList := {}                  // Variable del Sistema
 
-       FIELD cCodigoGru                     // C¢digo del Grupo
+       LOCAL cCodigoTes := ''               // C¢digo del estudiante
+       LOCAL cNombreTes := ''               // Nombre del estudiante
 *>>>>FIN DECLARACION DE VARIABLES
 
 *>>>>DECLARACION PARAMETROS GENERALES
@@ -118,56 +124,78 @@ FUNCTION Matr_6341(aParam1,aParam2,aParam3)
 	  CloseAll()
 	  RETURN NIL
        ENDIF
+       CloseAll()
 *>>>>FIN LECTURA PARAMETROS GENERALES
 
-*>>>>IMPRESION POR GRUPOS
+*>>>>SELECCION DE LAS AREAS DE TRABAJO
+       IF !lUseMaeMtr(lShared,PathUno+'\'+cPatSis,cMaeAlu,cAnoSis) .OR.;
+	  !lUseDbf(.T.,PathUno+'\'+PathSis+'\'+FilePer,'PER',NIL,lShared) .OR.;
+	  !lUseDbf(.T.,cPatSis+'\'+fMtrAno+cAnoUsr+ExtFile,'ANO',NIL,lShared) .OR.;
+	  !lUseDbf(.T.,cPatSis+'\'+FileSib,'SIB',NIL,lShared)
+	  cError('ABRIENDO ARCHIVOS')
+	  CLOSE ALL
+	  RETURN NIL
+       ENDIF
+*>>>>FIN SELECCION DE LAS AREAS DE TRABAJO
+
+*>>>>IMPRESION DE LOS ENCABEZADOS
+       nNroFil := nMarco(nFilPal+1,'POR FAVOR DIGITE EL CODIGO DE LOS '+;
+				   ' ESTUDIANTES A ACTUALIZAR',22,'°')
+       aTamCol := {06,06,50}
+       aTitulo := {'CODIGO','CURSO ','NOMBRE'}
+       cMsgTxt := cRegPrint(aTitulo,aTamCol,@aNroCol)
+       @ nNroFil,nNroCol SAY cMsgTxt
+*>>>>FIN IMPRESION DE LOS ENCABEZADOS
+
+*>>>>GRABACION DE LOS BECADOS
+       nNroFil++
        DO WHILE .T.
 
-**********LECTURA DEL GRUPO
-	    cCodGru := SPACE(04)
-	    @ nFilInf+1,nColInf SAY 'GRUPO :' GET cCodGru PICT '9999'
-	    READ
-	    IF EMPTY(cCodGru)
+**********LECTURA DEL CODIGO DEL ESTUDIANTE
+	    cSavLin := SAVESCREEN(nNroFil,00,nNroFil,79)
+	    cCodigoTes := cLeeCodEst(nNroFil,aNroCol[1],cMaeAlu,@cMaeAct)
+	       cNalias := cMaeAct
+
+	    IF EMPTY(cCodigoTes) .OR. EMPTY(cMaeAct)
 	       EXIT
 	    ENDIF
-**********FIN LECTURA DEL GRUPO
+	    cNombreTes := RTRIM(&cNalias->cApelliEst)+' '+;
+			  RTRIM(&cNalias->cNombreEst)
+	    cNombreTes := ALLTRIM(SUBS(cNombreTes+SPACE(50),1,50))
+	    @ nNroFil,aNroCol[2] SAY &cNalias->cCodigoGru
+	    @ nNroFil,aNroCol[3] SAY cNombreTes
+**********FIN LECTURA DEL CODIGO DEL ESTUDIANTE
 
-**********LECTURA DEL NUMERO DE COPIAS
-	    @ nFilInf+2,nColInf SAY 'COPIAS:' GET nCopias PICT "99"
-	    READ
-	    IF nCopias == 0
-	       EXIT
+**********ACTUALIZACION DE LA INFORMACION DEL ACUDIENTE
+	    cSavPan := SAVESCREEN(0,0,24,79)
+	    lDatosEst(lShared,nFilPal,1,cNalias,;
+		      cCodigoTes,cNombreTes,&cNalias->cCodigoGru,3)
+	    RESTSCREEN(0,0,24,79,cSavPan)
+**********FIN ACTUALIZACION DE LA INFORMACION DEL ACUDIENTE
+
+**********INCREMENTO DE LAS FILAS
+	    nNroFil++
+	    IF nNroFil > 19
+
+*--------------IMPRESION DEL ULTIMO REGISITRO
+		 nNroFil := nMarco(nFilPal+1,'POR FAVOR DIGITE EL CODIGO '+;
+			    'DE LOS ESTUDIANTES A ACTUALIZAR',22,'°')
+		 @ nNroFil,nNroCol SAY cMsgTxt
+
+		 nNroFil++
+		 SET COLOR TO I
+		 @ nNroFil,aNroCol[1] SAY cCodigoTes
+		 @ nNroFil,aNroCol[2] SAY &cNalias->cCodigoGru
+		 @ nNroFil,aNroCol[3] SAY cNombreTes
+		 SET COLOR TO
+
+		 nNroFil++
+*--------------FIN IMPRESION DEL ULTIMO REGISITRO
+
 	    ENDIF
-**********FIN LECTURA DEL NUMERO DE COPIAS
-
-**********FILTRACION DEL MAESTRO
-	    SELECT &cMaeAct
-	    SET FILTER TO cCodigoGru == cCodGru
-	    GO TOP
-	    IF EOF()
-	       cError('NO HAY ALUMNOS PARA EL GRUPO '+cCodGru)
-	       SET FILTER TO
-	       EXIT
-	    ENDIF
-**********FIN FILTRACION DEL MAESTRO
-
-**********IMPRESION DE N COPIAS
-	    nNroCop := 1
-	    DO WHILE nNroCop <= nCopias
-
-*--------------IMPRESION DE LA LINEA DE ESTADO
-		 LineaEstado('IMPRIMIENDO EL GRUPO: '+cCodGRu+;
-			     'ºNRO COPIAS:'+STR(nNroCop,2)+' DE:'+;
-			     STR(nCopias,2)+'ºPOR FAVOR ESPERE ...',cNomSis)
-*--------------FIN IMPRESION DE LA LINEA DE ESTADO
-
-	       Listas_2(cCodGru,cNomEmp,cNomSis,cAnoUsr,cMaeAct,cJorTxt)
-	       nNroCop++
-
-	    ENDDO
-	    SET FILTER TO
-**********FIN IMPRESION DE N COPIAS
+**********FIN INCREMENTO DE LAS FILAS
 
        ENDDO
+       CLOSE ALL
        RETURN NIL
-*>>>>FIN IMPRESION POR GRUPOS
+*>>>>FIN GRABACION DE LOS BECADOS

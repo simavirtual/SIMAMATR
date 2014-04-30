@@ -990,11 +990,14 @@ FUNCTION HojaMatr05(cCodigo,lNuevos,lRepite,nNroNiv,cNombre,cApelli,dFecNac,;
 *>>>>FIN DESCRIPCION DE PARAMETROS
 
 *>>>>DECLARACION DE VARIABLES
+       LOCAL       i := 0                   // Contador
+
        LOCAL aTitulo := {}                  // Titulos de las Columnas
        LOCAL aTamCol := {}                  // Tama¤o de las Columnas
        LOCAL aNroCol := {}                  // N£meros de Columnas
        LOCAL cTxtPrn := ''                  // Texto de impresi¢n
        LOCAL nLenPrn := 0                   // Longitud de impresi¢n
+       LOCAL cCampo  := ''                  // Variable de Campo
 *>>>>FIN DECLARACION DE VARIABLES
 
 *>>>>ACTIVACION DE LA IMPRESORA
@@ -1144,23 +1147,29 @@ FUNCTION HojaMatr05(cCodigo,lNuevos,lRepite,nNroNiv,cNombre,cApelli,dFecNac,;
        LineaPrn({SPACE(13)+'CORREO ELECTRONICO:',cMaiEst,;
 		 'CELULAR:'+SUBS(cCelEst,1,13)},1)
 
+       cDirPad := ALLTRIM(cDirPad)+SPACE(40)
+       cDirPad := SUBS(cDirPad,1,40)
 
        LineaPrn({SPACE(13)+'PADRE: ',SUBS(cNomPad+SPACE(40),1,40)},2)
        LineaPrn({SPACE(13)+'DOCUMENTO DE IDENTIDAD:',cPadNit,SPACE(12)+'EXPEDIDO EN:',cPadLug},1)
        LineaPrn({SPACE(13)+'DIRECCION:'             ,cDirPad,SPACE(01)+'PROFESION:',SUBS(cProPad,1,18)},1)
        LineaPrn({SPACE(13)+'TELEFONOS FIJOS:'       ,cTelPad,SPACE(21)+'CELULAR:',cCelPad},1)
 
+       cDirMad := ALLTRIM(cDirMad)+SPACE(40)
+       cDirMad := SUBS(cDirMad,1,40)
+
        LineaPrn({SPACE(13)+'MADRE: ',SUBS(cNomMad+SPACE(40),1,40)},2)
        LineaPrn({SPACE(13)+'DOCUMENTO DE IDENTIDAD:',cMadNit,SPACE(12)+'EXPEDIDO EN:',cMadLug},1)
        LineaPrn({SPACE(13)+'DIRECCION:'             ,cDirMad,SPACE(01)+'PROFESION:',SUBS(cProMad,1,18)},1)
        LineaPrn({SPACE(13)+'TELEFONOS FIJOS:'       ,cTelMad,SPACE(21)+'CELULAR:',cCelMad},1)
 
+       cDirAcu := ALLTRIM(cDirAcu)+SPACE(40)
+       cDirAcu := SUBS(cDirAcu,1,40)
 
        LineaPrn({SPACE(13)+'ACUDIENTE: ',SUBS(cNomAcu+SPACE(40),1,40)},2)
        LineaPrn({SPACE(13)+'DOCUMENTO DE IDENTIDAD:',cAcuNit,SPACE(12)+'EXPEDIDO EN:',cAcuLug},1)
        LineaPrn({SPACE(13)+'DIRECCION:'             ,cDirAcu,SPACE(01)+'PROFESION:',SUBS(cProAcu,1,18)},1)
        LineaPrn({SPACE(13)+'TELEFONOS FIJOS:'       ,cTelAcu,SPACE(21)+'CELULAR:',cCelAcu},1)
-
 
        IF !EMPTY(cCole13Est+;
 		 cCole00Est+cCole01Est+cCole02Est+cCole03Est+;

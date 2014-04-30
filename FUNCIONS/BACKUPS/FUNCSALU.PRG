@@ -736,6 +736,7 @@ FUNCTION lCodMaeMtr(cCodEst,cMaeAlu,cNalias,lAnoAct,lMensaj)
        LOCAL lExiste := .F.                 // .T. Existe el c¢digo
 *>>>>FIN DECLARACION DE VARIABLES
 
+
 *>>>>VALIDACION DEL CODIGO
        cNalias := NIL
        lAnoAct := IF(lAnoAct == NIL,.T.,lAnoAct)
@@ -762,6 +763,7 @@ FUNCTION lCodMaeMtr(cCodEst,cMaeAlu,cNalias,lAnoAct,lMensaj)
 	   ENDIF
        ENDIF
 
+
        IF 'PRI' $ cMaeAlu .AND. !lExiste
 
 	   lExiste := .F.
@@ -773,6 +775,7 @@ FUNCTION lCodMaeMtr(cCodEst,cMaeAlu,cNalias,lAnoAct,lMensaj)
 	   ENDIF
        ENDIF
 
+
        IF 'BTO' $ cMaeAlu .AND. !lExiste
 
 	  lExiste := .F.
@@ -783,6 +786,7 @@ FUNCTION lCodMaeMtr(cCodEst,cMaeAlu,cNalias,lAnoAct,lMensaj)
 	     lExiste := .T.
 	  ENDIF
        ENDIF
+
 
        lMensaj := IF(lMensaj == NIL,.T.,lMensaj)
        IF !lExiste .AND. lMensaj

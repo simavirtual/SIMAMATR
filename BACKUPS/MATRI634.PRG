@@ -218,6 +218,7 @@ FUNCTION Matri_634(aParam1,aParam2,aParam3)
 	   *Listas de Clase por grupos
 
        CASE nNroOpc == 2
+
 	    Matr_6342(aParam1,aParam2,aParam3)
 	   *Listas de clase por niveles
 

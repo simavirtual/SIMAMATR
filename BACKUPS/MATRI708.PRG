@@ -175,6 +175,7 @@ FUNCTION Matri_708(aP1,aP2,aP3)
        AADD(aMenus,'5<CONFIGURACION PRINTER>')
        AADD(aMenus,'6<INFORMES DEL SISTEMA >')
        AADD(aMenus,'7<INFORMES CONTROLADOS >')
+       AADD(aMenus,'8<CONFI PRINTER RECIBOS>')
 
        AADD(aAyuda,'Consulta la Configuraci¢n General del Sistema')
        AADD(aAyuda,'Consulta la Configuraci¢n del Sistema')
@@ -183,6 +184,7 @@ FUNCTION Matri_708(aP1,aP2,aP3)
        AADD(aAyuda,'Consulta la Configuraci¢n de las Impresoras')
        AADD(aAyuda,'Consulta los informes del sistema')
        AADD(aAyuda,'Consulta los informes controlados')
+       AADD(aAyuda,'Consulta la Configuraci¢n de la Impresi¢n de Recibos')
 *>>>>FIN DECLARCION Y EJECUCION DEL MENU
 
 *>>>>VALIDACION DEL LIMITE DE LA ULTIMA COLUMNA
@@ -289,6 +291,27 @@ FUNCTION Matri_708(aP1,aP2,aP3)
 		  MantenIso(aP1,aP2,aP3,;
 			    aArchvo,cOpcPrn,nCodPrn,lModReg,;
 			    lDelReg,lInsReg,lHaySql,bInsReg)
+***************FIN MANTENIMIENTO DEL ARCHIVO
+
+
+	  CASE nNroOpc == 8
+
+***************AREAS DE TRABAJO
+		 aArchvo := {}
+		 AADD(aArchvo,{PathSis+'\'+FilePrn,NIL,'PRN'})
+		 AADD(aArchvo,{PathSis+'\'+FileMzp,NIL,'MZP'})
+		 AADD(aArchvo,{PathSis+'\'+FileInf,NIL,'INF'})
+***************FIN AREAS DE TRABAJO
+
+***************MANTENIMIENTO DEL ARCHIVO
+		  lModReg := .T.
+		  lDelReg := .F.
+		  lInsReg := .F.
+		  lHaySql := .F.
+
+		 MantenMzp(lShared,nModCry,cNomSis,cCodEmp,cNitEmp,cEmpPal,;
+			   cNomEmp,cNomSec,cNomUsr,cAnoUsr,aArchvo,lPrnArc,;
+			   cOpcPrn,nCodPrn,lModReg,lDelReg,lInsReg,lHaySql)
 ***************FIN MANTENIMIENTO DEL ARCHIVO
 
 	  ENDCASE

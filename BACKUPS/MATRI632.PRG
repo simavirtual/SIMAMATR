@@ -54,6 +54,7 @@ FUNCTION Matri_632(aParam1,aParam2,aParam3)
        LOCAL nTotPie := 0                   // Total de Pie de p ginas
        LOCAL aMezIso := {}                  // Campos a Mesclar
        LOCAL bInsIso := NIL                 // Block de Gestion Documental
+       LOCAL bDerAut := NIL                 // Block Derechos de Autor
        LOCAL oBrowse := NIL                 // Browse del Archivo
        LOCAL nLenPrn := 0                   // Longitud l¡nea de impresi¢n
        LOCAL cTxtPrn := ''                  // Texto de impresi¢n
@@ -139,11 +140,6 @@ FUNCTION Matri_632(aParam1,aParam2,aParam3)
        CloseAll()
 *>>>>FIN LECTURA PARAMETROS GENERALES
 
-*>>>>SELECCION DEL NIVEL
-       cMaeAct := cNivelEst(nFilInf+1,nColInf,cMaeAlu)
-       nParameSet(aParam1,'cMaeAct',cMaeAct)
-*>>>>FIN SELECCION DEL NIVEL
-
 *>>>>AREAS DE TRABAJO
        aUseDbf := {}
 
@@ -155,8 +151,7 @@ FUNCTION Matri_632(aParam1,aParam2,aParam3)
 *>>>>FIN AREAS DE TRABAJO
 
 *>>>>SELECCION DE LAS AREAS DE TRABAJO
-       IF !lUseDbfs(aUseDbf) .OR.;
-	  !lUseMaeMtr(lShared,PathUno+'\'+cPatSis,cMaeAct,cAnoSis,.T.,.F.)
+       IF !lUseDbfs(aUseDbf)
 	  cError('ABRIENDO ARCHIVOS')
 	  CloseAll(aUseDbf)
 	  RETURN NIL
@@ -165,12 +160,7 @@ FUNCTION Matri_632(aParam1,aParam2,aParam3)
 
 *>>>>VALIDACION DE CONTENIDOS DE ARCHIVOS
        lHayErr := .T.
-       SELECT &cMaeAct
-
        DO CASE
-       CASE RECCOUNT() == 0
-	    cError('NO EXISTEN ESTUDIANTES MATRICULADOS')
-
        CASE SCO->(RECCOUNT()) == 0
 	    cError('NO EXISTE CONFIGURACION GENERAL')
 
@@ -197,14 +187,6 @@ FUNCTION Matri_632(aParam1,aParam2,aParam3)
 	  RETURN NIL
        ENDIF
 *>>>>FIN LOCALIZACION DE LA IMPRESORA
-
-*>>>>LECTURA DE LOS NIVELES A IMPRIMIR
-       IF !lLeeNivels(nFilInf+1,nColInf,@cNivIni,@cNivFin,@nCopias,cMaeAlu)
-	  CloseAll(aUseDbf)
-	  RETURN NIL
-       ENDIF
-       nNroNiv := VAL(cNivIni)
-*>>>>FIN LECTURA DE LOS NIVELES A IMPRIMIR
 
 *>>>>TIPO DE ESTUDIANTES
        nNroOpc := nLeeOpcion('IMPRIMIR: '+;
@@ -256,16 +238,20 @@ FUNCTION Matri_632(aParam1,aParam2,aParam3)
        IF MTR->lPrnArcMtr
 	  SET DEVICE TO PRINT
        ELSE
-	  FilePrn := 'Matr'+cMaeAct
-	  nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,MTR->cOpcPrnMtr,.T.,2,bInsIso)
+	  FilePrn := 'matr'+cAnoUsr
+	  nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,MTR->cOpcPrnMtr,.T.,2,bInsIso,,PathDoc)
 	  IF EMPTY(nOpcPrn)
 	     CloseAll(aUseDbf)
 	     RETURN NIL
 	  ENDIF
        ENDIF
+
        IF nOpcPrn == 6
-	  FilePrn := PathDoc+'\matr'+cMaeAct+'.xls'
+	  FilePrn := PathDoc+'\matr'+cAnoUsr+'.xls'
+       ELSE
+	  FilePrn := PathDoc+'\matr'+cAnoUsr+'.txt'
        ENDIF
+
        SET DEVICE TO SCREEN
 *>>>>FIN ACTIVACION DE LA IMPRESORA
 
@@ -291,80 +277,37 @@ FUNCTION Matri_632(aParam1,aParam2,aParam3)
        ENDFOR
 *>>>>FIN SUSTITUCION DE TEXTO
 
-*>>>>INDEXACION DEL ARCHIVO
-       SAVE SCREEN
-       Termometro(0,'ORDENANDO POR APELLIDO')
-       Termometro(50)
-       SELECT &cMaeAct
-       fNtxTem := cFileTempo('',SUBS(cNomUsr,1,4),cExtNtx)
-       INDEX ON SUBS(cCodigoGru,1,2)+cApelliEst;
-	     TO &fNtxTem
-       IF lShared
-	  DBSETINDEX(fNtxTem)
-       ELSE
-	  SET INDEX TO &fNtxTem
-       ENDIF
-       Termometro(100)
-       RESTORE SCREEN
-*>>>>FIN INDEXACION DEL ARCHIVO
-
 *>>>>IMPRESION DEL INFORME
-       DO WHILE nNroNiv <= VAL(cNivFin)
+       PrnMatApel(lShared,PathUno,cNomEmp,cNomSis,;
+		  cNomUsr,cAnoUsr,cMaeAlu,cJorTxt,;
+		  FilePrn,nOpcPrn,@nHanXml,cOpcSys,;
+		  nNroOpc,nNroIso,cCodIso,aTitIso,;
+		  cPiePag,aPieIso,nTotPie,aMezIso,;
+		  bInsIso,@bDerAut,cPatSis)
 
-**********FILTRACION DEL MAESTRO
-	    SET FILTER TO VAL(SUBS(cCodigoGru,1,2)) == nNroNiv
-	    GO TOP
-	    IF EOF()
-	       cError('PARA '+cNomNiv(nNroNiv)+;
-		      ' NO HAY MATRICULADOS')
-	       nNroCop := nCopias+1
-	    ENDIF
-**********FIN FILTRACION DEL MAESTRO
+       EVAL(bDerAut)
+      *Derechos de Autor
+       EJECT
 
-**********IMPRESION DE N COPIAS
-	    DO WHILE nNroCop <= nCopias
+       SET DEVICE TO SCREEN
 
-*--------------IMPRESION DE LA LINEA DE ESTADO
-		 LineaEstado('IMPRIMIENDO NIVEL: '+STR(nNroNiv,2)+'º'+;
-			     'HASTA NIVEL: '+cNivFin+;
-			     'ºNRO COPIAS:'+STR(nNroCop,2)+' DE:'+;
-			     STR(nCopias,2)+'ºPOR FAVOR ESPERE ...',cNomSis)
-*--------------FIN IMPRESION DE LA LINEA DE ESTADO
-
-	       PrnMatApel(lShared,nNroNiv,cNomEmp,cNomSis,;
-			  cNomUsr,cAnoUsr,cMaeAct,cJorTxt,;
-			  FilePrn,nOpcPrn,@nHanXml,cOpcSys,;
-			  nNroOpc,nNroIso,cCodIso,aTitIso,;
-			  cPiePag,aPieIso,nTotPie,aMezIso,;
-			  bInsIso)
-	       nNroCop++
-
-	    ENDDO
-**********FIN IMPRESION DE N COPIAS
-
-	  nNroNiv++
-	  nNroCop := 1
-
-       ENDDO
-
-       SET FILTER TO
-       VerPrn(nOpcPrn,FilePrn,nHanXml)
        CloseAll(aUseDbf)
-       lFileDelete(fNtxTem)
        RETURN NIL
 *>>>>FIN IMPRESION DEL INFORME
 
+
 /*************************************************************************
-* TITULO DE LA FUNCION..: IMPRESION DE ALUMNOS MATRICULADOS POR NIVELES  *
+* TITULO..: IMPRESION DE ALUMNOS MATRICULADOS POR NIVELES                *
 **************************************************************************
 
-AUTOR: Nelson Fern ndez G¢mez       FECHA DE CREACION: DIC 02/94 VIE A
-						       DIC 02/94 VIE
+AUTOR: Nelson Fern ndez G¢mez       FECHA DE CREACION: DIC 06/2012 MIE A
+       Bucaramanga, Colombia	    INICIO: 02:00 PM   DIC 06/2012 MIE
+
 OBJETIVOS:
 
-1- Imprime los estudiante matr¡culados ordenados por nivel y por apellido
+1- Imprime los estudiante matr¡culados por nombre.
 
-2)- Retorna NIL
+2- Retorna NIL
 
 SINTAXIS:
 
@@ -373,19 +316,19 @@ SINTAXIS:
 *                              PROGRAMA                                  *
 *------------------------------------------------------------------------*/
 
-FUNCTION PrnMatApel(lShared,nNroNiv,cNomEmp,cNomSis,cNomUsr,cAnoUsr,;
-		    cMaeAct,cJorTxt,FilePrn,nOpcPrn,nHanXml,cOpcSys,;
+FUNCTION PrnMatApel(lShared,PathUno,cNomEmp,cNomSis,cNomUsr,cAnoUsr,;
+		    cMaeAlu,cJorTxt,FilePrn,nOpcPrn,nHanXml,cOpcSys,;
 		    nNroOpc,nNroIso,cCodIso,aTitIso,cPiePag,aPieIso,;
-		    nTotPie,aMezIso,bInsIso)
+		    nTotPie,aMezIso,bInsIso,bDerAut,cPatSis)
 
 *>>>>DESCRIPCION DE PARAMETROS
 /*     lShared                              // .T. Archivos Compartidos
-       nNroNiv                              // N£mero de nivel a imprimir
+       PathUno                              // Path de Integraci¢n Uno
        cNomEmp                              // Nombre de la empresa
        cNomSis                              // Nombre del sistema
        cNomUsr                              // Nombre del Usuario
        cAnoUsr                              // A¤o del Usuario
-       cMaeAct                              // Maestro Actual
+       cMaeAlu			            // Maestros habilitados
        cJorTxt                              // Jornada Escogida
        FilePrn                              // Archivo de impresion
        nOpcPrn                              // Opci¢n de Impresi¢n
@@ -399,11 +342,15 @@ FUNCTION PrnMatApel(lShared,nNroNiv,cNomEmp,cNomSis,cNomUsr,cAnoUsr,;
        aPieIso      		            // Textos del pie de p gina
        nTotPie                              // Total de Pie de p ginas
        aMezIso                              // Campos a Mesclar
-       bInsIso                              // Block de Gestion Documental */
+       bInsIso                              // Block de Gestion Documental
+       bDerAut                              // @Block Derechos de Autor
+       cPatSis                              // Path del sistema */
 *>>>>FIN DESCRIPCION DE PARAMETROS
 
 *>>>>DECLARACION DE VARIABLES
        LOCAL lHayErr := .F.                 // .T. Hay Error
+
+       LOCAL cAnoSis := SUBS(cAnoUsr,3,2)   // A¤o del sistema
 
        LOCAL cFecPrn := ''                  // @Fecha de Impresi¢n
        LOCAL cHorPrn := ''                  // @Hora de Impresi¢n
@@ -426,11 +373,11 @@ FUNCTION PrnMatApel(lShared,nNroNiv,cNomEmp,cNomSis,cNomUsr,cAnoUsr,;
        LOCAL nColCab := 0                   // Columna del encabezado
        LOCAL bPagina := NIL                 // Block de P gina
        LOCAL bCabeza := NIL                 // Block de Encabezado
-       LOCAL bDerAut := NIL                 // Block Derechos de Autor
        LOCAL nLinReg := 1                   // L¡neas del registro
        LOCAL cTxtPrn := ''                  // Texto de impresi¢n
      *ÀVariables de informe
 
+       LOCAL cMaeAct := ''                  // Maestro Actual
        LOCAL nTotAno := 0                   // Total de A¤os
        LOCAL       i := 1                   // Contador
 
@@ -453,7 +400,7 @@ FUNCTION PrnMatApel(lShared,nNroNiv,cNomEmp,cNomSis,cNomUsr,cAnoUsr,;
        aCabPrn := {cNomEmp,cNomSis+cCodIso,;
 		   aTitIso[1],;
 		   aTitIso[2],;
-		   cNomNiv(nNroNiv)}
+		   aTitIso[3]}
 
        aCabeza := {aCabPrn[1],aCabPrn[2],aCabPrn[3],aCabPrn[4],aCabPrn[5],;
                    nNroPag++,;
@@ -520,80 +467,91 @@ FUNCTION PrnMatApel(lShared,nNroNiv,cNomEmp,cNomSis,cNomUsr,cAnoUsr,;
        ENDIF
 *>>>>FIN IMPRESION DEL ENCABEZADO
 
-*>>>>VARIABLES PARA EL ENCABEZADO DEL INFORME
-       SELECT &cMaeAct
-       COUNT FOR VAL(SUBS(cCodigoGru,1,2)) == nNroNiv TO nTotReg
-      *Total de registros a imprimir
-*>>>>FIN VARIABLES PARA EL ENCABEZADO DEL INFORME
+*>>>>RECORRIDO POR NIVELES
+       FOR i := 1 TO LEN(cMaeAlu)/3
 
-*>>>>IMPRESION DEL CUERPO DEL INFORME
-       SELECT &cMaeAct
-       GO TOP
-       DO WHILE .NOT. EOF() .AND. nTotReg # 0
+	   cMaeAct := SUBS(cMaeAlu,i*3-2,3)
 
-**********ANALISIS DE DECISION
-	    lHayErr := .F.
-	    DO CASE
-	    CASE nNroOpc == 1 .AND. &cMaeAct->lEstNewEst
-	    CASE nNroOpc == 2 .AND. !&cMaeAct->lEstNewEst
-	    CASE nNroOpc == 3
-	    OTHERWISE
-		 lHayErr := .T.
-	    ENDCASE
-	    IF lHayErr
-	       SKIP
-	       LOOP
-	    ENDIF
-**********FIN ANALISIS DE DECISION
+***********SELECCION DE LAS AREAS DE TRABAJO
+	     IF !lUseMaeMtr(lShared,PathUno+'\'+cPatSis,;
+			    cMaeAct,cAnoSis,.T.,.F.)
+		LOOP
+	     ENDIF
+***********FIN SELECCION DE LAS AREAS DE TRABAJO
 
-**********IMPRESION DEL CONTENIDO DEL INFORME
-	    cNombreTes := ALLTRIM(&cMaeAct->cNombreEst)
-	    cApelliTes := ALLTRIM(&cMaeAct->cApelliEst)
+***********RECORRIDO DE ESTUDIANTES
+	     SELECT &cMaeAct
+	     DBGOTOP()
+	     DO WHILE .NOT. EOF()
 
-	    cNomfulTes := RTRIM(&cMaeAct->cApelliEst)+' '+;
-			     &cMaeAct->cNombreEst+SPACE(10)
+*===============IMPRESION DE LA LINEA DE ESTADO
+		  SET DEVICE TO SCREEN
+		  LineaEstados('REGISTRO No. '+STR(RECNO(),4)+'/'+;
+				STR(RECCOUNT(),4),cNomSis)
+		  SET DEVICE TO PRINT
+*===============FIN IMPRESION DE LA LINEA DE ESTADO
 
-	    cNomfulTes := SUBS(cNomfulTes+SPACE(40),1,40)
-	    cNombreTes := SUBS(cNombreTes+SPACE(40),1,40)
-	    cApelliTes := SUBS(cApelliTes+SPACE(40),1,40)
+*===============ANALISIS DE DECISION
+		  lHayErr := .F.
+		  DO CASE
+		  CASE nNroOpc == 1 .AND. &cMaeAct->lEstNewEst
+		  CASE nNroOpc == 2 .AND. !&cMaeAct->lEstNewEst
+		  CASE nNroOpc == 3
+		  OTHERWISE
+		       lHayErr := .T.
+		  ENDCASE
+		  IF lHayErr
+		     SELECT &cMaeAct
+		     DBSKIP()
+		     LOOP
+		  ENDIF
+*===============FIN ANALISIS DE DECISION
 
-	    nTotAno := nAnosSi(&cMaeAct->dFecNacEst,DATE())
+*===============IMPRESION DEL INFORME
+		  cNombreTes := ALLTRIM(&cMaeAct->cNombreEst)
+		  cApelliTes := ALLTRIM(&cMaeAct->cApelliEst)
 
-	    IF nOpcPrn == 6
-	       aRegPrn := {&cMaeAct->cCodigoEst,;
-			   &cMaeAct->cCodigoGru,;
-			   cApelliTes,;
-			   cNombreTes}
+		  cNomfulTes := RTRIM(&cMaeAct->cApelliEst)+' '+;
+				   &cMaeAct->cNombreEst+SPACE(10)
 
-	       lPrnOpc(lShared,nOpcPrn,FilePrn,nHanXml,01,nColCab,;
-		       aTitPrn,aRegPrn,aNroCol,bPagina,bDerAut,bCabeza)
-	    ELSE
-	       aRegPrn := {STR(i++,4),;
-			   &cMaeAct->cCodigoEst,;
-			   cNombreTes,;
-			   &cMaeAct->cCodigoGru,;
-			   IF(&cMaeAct->lRetiroEst,'RETIRADO',;
-			      IF(&cMaeAct->lEstNewEst,'NUEVO',SPACE(08))),;
-			   cFecha(&cMaeAct->dFecNacEst),;
-			   STR(nTotAno,4),;
-			   IF(&cMaeAct->lSexFemEst,'','X'),;
-			   IF(&cMaeAct->lSexFemEst,'X','')}
+		  cNomfulTes := SUBS(cNomfulTes+SPACE(40),1,40)
+		  cNombreTes := SUBS(cNombreTes+SPACE(40),1,40)
+		  cApelliTes := SUBS(cApelliTes+SPACE(40),1,40)
 
-	       lPrnOpc(lShared,nOpcPrn,FilePrn,nHanXml,01,nColCab,;
-		       aTitPrn,aRegPrn,aNroCol,bPagina,bDerAut,bCabeza)
-	    ENDIF
-**********FIN IMPRESION DEL CONTENIDO DEL INFORME
+		  nTotAno := nAnosSi(&cMaeAct->dFecNacEst,DATE())
 
-	  SKIP
+		  IF nOpcPrn == 6
+		     aRegPrn := {&cMaeAct->cCodigoEst,;
+				 &cMaeAct->cCodigoGru,;
+				 cApelliTes,;
+				 cNombreTes}
 
-       ENDDO
-*>>>>FIN IMPRESION DEL CUERPO DEL INFORME
+		     lPrnOpc(lShared,nOpcPrn,FilePrn,nHanXml,01,nColCab,;
+			     aTitPrn,aRegPrn,aNroCol,bPagina,bDerAut,bCabeza)
+		  ELSE
+		     aRegPrn := {STR(i++,4),;
+				 &cMaeAct->cCodigoEst,;
+				 cNombreTes,;
+				 &cMaeAct->cCodigoGru,;
+				 IF(&cMaeAct->lRetiroEst,'RETIRADO',;
+				    IF(&cMaeAct->lEstNewEst,'NUEVO',SPACE(08))),;
+				 cFecha(&cMaeAct->dFecNacEst),;
+				 STR(nTotAno,4),;
+				 IF(&cMaeAct->lSexFemEst,'','X'),;
+				 IF(&cMaeAct->lSexFemEst,'X','')}
 
-*>>>>IMPRESION DERECHOS
-       EVAL(bDerAut)
-      *Derechos de Autor
-       EJECT
+		     lPrnOpc(lShared,nOpcPrn,FilePrn,nHanXml,01,nColCab,;
+			     aTitPrn,aRegPrn,aNroCol,bPagina,bDerAut,bCabeza)
+		  ENDIF
+*===============FIN IMPRESION DEL INFORME
 
-       SET DEVICE TO SCREEN
+		SELECT &cMaeAct
+		DBSKIP()
+
+	     ENDDO
+***********FIN RECORRIDO DE ESTUDIANTES
+
+
+       ENDFOR
        RETURN NIL
-*>>>>FIN IMPRESION DERECHOS
+*>>>>FIN RECORRIDO POR NIVELES

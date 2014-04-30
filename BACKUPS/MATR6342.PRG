@@ -121,7 +121,6 @@ FUNCTION Matr_6342(aParam1,aParam2,aParam3)
 	  CloseAll()
 	  RETURN NIL
        ENDIF
-       CloseAll()
 *>>>>FIN LECTURA PARAMETROS GENERALES
 
 *>>>>SELECION DE LAS AREAS DE TRABAJO

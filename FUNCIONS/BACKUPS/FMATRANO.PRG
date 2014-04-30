@@ -54,8 +54,8 @@ FUNCTION CreaDbfAno(lShared,PathAno,FileAno,fNtxAno,aStrDbf)
 			 {"cIntDosAno","Character",70,0},;  // Path de Integraci¢n No. 2
 			 {"cIntTreAno","Character",70,0},;  // Path de Integraci¢n No. 3
 			 {"cIntCuaAno","Character",70,0},;  // Path de Integraci¢n No. 4
-			 {"cMaeHabAno","Character",09,0},;  //* Maestros Habilitados para el A¤o
-			 {"cJorHabAno","Character",04,0},;  //* Jornadas Habilitadas
+			 {"cMaeHabAno","Character",09,0},;  // Maestros Habilitados para el A¤o
+			 {"cJorHabAno","Character",04,0},;  // Jornadas Habilitadas
 			 {"nNroAdmAno","Numeric"  ,04,0},;  // Contador de Inscripciones alumnos nuevos
 			 {"nVlrAdmAno","Numeric"  ,10,0},;  // Valor de la Inscripci¢n.
 			 {"nNroProAno","Numeric"  ,04,0},;  // Contador de Inscripciones de profesores nuevos
@@ -75,6 +75,7 @@ FUNCTION CreaDbfAno(lShared,PathAno,FileAno,fNtxAno,aStrDbf)
 			 {"nRecNroAno","Numeric"  ,02,0},;  // Clase de Recibo identificado por c¢digo
 			 {"nTipFacAno","Numeric"  ,02,0},;  // 1->Matr¡cula 2->Pensi¢n 3->Ambas
 			 {"lPrePrnAno","Logical"  ,01,0},;  // .T. Imprimir Forma Preimpresa
+			 {"lPreMzpAno","Logical"  ,01,0},;  // .T. Imprimir con configuraci¢n de Columnas
 			 {"lLeeInfAno","Logical"  ,01,0},;  // .T. Leer Informaci¢n de contacto
 			 {"lHayNroAno","Logical"  ,01,0},;  // .T. Controlar N£mero Consecutivo
 			 {"nNroFacAno","Numeric"  ,09,0},;  // N£mero Consecutivo de la Factura
@@ -85,19 +86,21 @@ FUNCTION CreaDbfAno(lShared,PathAno,FileAno,fNtxAno,aStrDbf)
 			 {"cCodTrcAno","Character",02,0},;  // C¢digo del Tipo de Recibo
 			 {"cConMatAno","Character",14,0},;  // Conceptos para la matricula
 			 {"cConPenAno","Character",14,0},;  // Conceptos para la pension
-			 {"lIntMatAno","Logical"  ,01,0},;  //*.T. Utilizar interes por mora y no valor de recargo para lo no pagos o pagos extemporaneos
+			 {"lIntMatAno","Logical"  ,01,0},;  // .T. Utilizar interes por mora y no valor de recargo para lo no pagos o pagos extemporaneos
 			 {"nIntMatAno","Numeric"  ,05,2},;  // Intereses para la matricula
-			 {"nMorMatAno","Numeric"  ,10,2},;  //*Valor recargo por pago extemporaneo o no pago
-			 {"lIntPenAno","Logical"  ,01,0},;  //*.T. Utilizar interes por mora y no valor de recargo para lo no pagos o pagos extemporaneos
+			 {"nMorMatAno","Numeric"  ,10,2},;  // Valor recargo por pago extemporaneo o no pago
+			 {"lIntPenAno","Logical"  ,01,0},;  // .T. Utilizar interes por mora y no valor de recargo para lo no pagos o pagos extemporaneos
 			 {"nIntPenAno","Numeric"  ,05,2},;  // Intereses para la pension
-			 {"nMorPenAno","Numeric"  ,10,2},;  //*Valor recargo por pago extemporaneo o no pago
+			 {"nMorPenAno","Numeric"  ,10,2},;  // Valor recargo por pago extemporaneo o no pago
 			 {"dOpoMatAno","Date"     ,08,0},;  // Fecha para pago oportuno. Matr¡cula
 			 {"dExtMatAno","Date"     ,08,0},;  // Fecha para pago extemporaneo. Matr¡cula
 			 {"lExtMatAno","Logical"  ,01,0},;  // Visualizar Fecha extemporanea. Matr¡cula
 			 {"dOpoPenAno","Date"     ,08,0},;  // Fecha para pago oportuno. Pension
 			 {"dExtPenAno","Date"     ,08,0},;  // Fecha para pago extemporaneo. Pensi¢n
 			 {"lExtPenAno","Logical"  ,01,0},;  // Visualizar Fecha Extemporanea
-			 {"lLeeFecAno","Logical"  ,01,0},;  //*.T. Leer Fecha de pago .F. Leer forma de pago
+			 {"lLeeFecAno","Logical"  ,01,0},;  // .T. Leer Fecha de pago .F. Leer forma de pago
+			 {"lSinGruAno","Logical"  ,01,0},;  //*.F. Con Grupo Anterior .T. Sin Grupo Anterior
+			 {"lValGruAno","Logical"  ,01,0},;  //*.T. Validar el Grupo para matricular.
 			 {"cMensajAno","Character",80,0},;  // Mensaje para la facturaci¢n
 			 {"lLeeObsAno","Logical"  ,01,0},;  // .T. Leer Observaci¢n individual para cada inscripci¢n
 			 {"cMenIncAno","Character",127,0},; // Mensaje para la Inscripci¢n
@@ -107,9 +110,11 @@ FUNCTION CreaDbfAno(lShared,PathAno,FileAno,fNtxAno,aStrDbf)
 			 {"cObsMtrAno","Character",134,0},; // Observaci¢n para la Hoja de Matr¡cula
 			 {"nTipLisAno","Numeric"  ,002,0},; // Tipo de lista de Clase
 			 {"nLinEspAno","Numeric"  ,002,0},; // N£mero de l¡neas para el encabezado
-			 {"cAnoMtrAno","Character",04,0},; // A¤o para procesar las matr¡culas
-			 {"cAnoAluAno","Character",04,0},; // A¤o para el Maestro de Estudiantes
-			 {"lSisbenAno","Logical"  ,001,0}}  // .T. Hay Sisben
+			 {"cAnoMtrAno","Character",04,0},;  // A¤o para procesar las matr¡culas
+			 {"cAnoAluAno","Character",04,0},;  // A¤o para el Maestro de Estudiantes
+			 {"lSisbenAno","Logical"  ,001,0},; // .T. Hay Sisben
+			 {"lMtrResAno","Logical"  ,001,0},; // .T. Matriculas Restricci¢n
+			 {"lEstAntAno","Logical"  ,001,0}}  // .T. Hay Estudiantes Antiguos
 *>>>>FIN DECLARACION DE VARIABLES
 
 *>>>>RETORNO DE LA ESTRUCTURA
@@ -158,7 +163,10 @@ FUNCTION CreaDbfAno(lShared,PathAno,FileAno,fNtxAno,aStrDbf)
 	  REPL ANO->nTipFacAno WITH 1    // 1:Matricula 2:Pension 3:Ambos
 	  REPL ANO->nRecNroAno WITH 1    // Recibo No. 1 por defecto
 	  REPL ANO->lPrePrnAno WITH .F.  // Imprimir recibo todo impreso
+	  REPL ANO->lPreMzpAno WITH .F.  // Imprimir con columnas Mzp
 	  REPL ANO->lLeeFecAno WITH .T.  // *.F. Leer forma de pago.
+	  REPL ANO->lSinGruAno WITH .F.  // Con Grupo Anterior para antiguos
+	  REPL ANO->lValGruAno WITH .T.  // Validar el Grupo para la Matricula.
 	  REPL ANO->nNroFacAno WITH 0    // N£mero Consecutivo en Cero
 	  REPL ANO->lHayNroAno WITH .F.  // No controlar consecutivo
 	  REPL ANO->lIntPenAno WITH .T.  // *.T. Interes por mora .F. Valor por Mora
@@ -936,6 +944,39 @@ FUNCTION oDefBrwAno(lShared,cAnoUsr,nFilSup,nColSup,nFilInf,;
 			 {'FIELD','lSisbenAno'},{'PICTURE','@!'}}
        oBrwAno:ADDCOLUMN(oColumn)
      *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('PRN COLUMNAS;FILAS MZP', {||ANO->lPreMzpAno})
+       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ANO'},;
+			 {'FIELD','lPreMzpAno'},{'PICTURE','@!'}}
+       oBrwAno:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('ESTUDIANTES ANTIGUOS;SIN GRUPO ASIGNADO',;
+				   {||ANO->lSinGruAno})
+       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ANO'},;
+			 {'FIELD','lSinGruAno'},{'PICTURE','@!'}}
+       oBrwAno:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('VALIDAR GRUPO;MATRICULA CONCEPTOS',;
+				   {||ANO->lValGruAno})
+       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ANO'},;
+			 {'FIELD','lValGruAno'},{'PICTURE','@!'}}
+       oBrwAno:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('MATRICULAS;RESTRICCIONES',{||ANO->lMtrResAno})
+       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ANO'},;
+			 {'FIELD','lMtrResAno'},{'PICTURE','@!'}}
+       oBrwAno:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('ESTUDIANTES;ANTIGUOS',{||ANO->lEstAntAno})
+       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ANO'},;
+			 {'FIELD','lEstAntAno'},{'PICTURE','@!'}}
+       oBrwAno:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
 
        RETURN oBrwAno
 *>>>>FIN DEFINICION DEL OBJETO BROWSE

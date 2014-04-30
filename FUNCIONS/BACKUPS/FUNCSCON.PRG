@@ -58,7 +58,9 @@ FUNCTION CreaDbfCon(lShared,PathCon,FileCon,fNtxCon,aStrDbf)
 			 {"nTipoCon"  ,"Numeric"  ,01,0},; // Tipo Concepto 0=>Pensi¢n, 1=>Ruta 2=>Cafeteria
 			 {"lSiCertCon","Logical"  ,01,0},; // .T. Si Certificado
 			 {"cCodCerCon","Character",02,0},; // C¢digo para el Certificado
-			 {"cNomCerCon","Character",16,0}}  // Nombre para el Certificado
+			 {"cNomCerCon","Character",16,0},; // Nombre para el Certificado
+			 {"lDesEfeDes","Logical"  ,01,0},; // .T. Descuento del Efectivo .F. No Descuento de Efectio implica ingreso
+			 {"cNomExtCon","Character",16,0}}  // Nombre Extra
 *>>>>FIN DECLARACION DE VARIABLES
 
 *>>>>RETORNO DE LA ESTRUCTURA
@@ -691,6 +693,12 @@ FUNCTION oDefBrwCon(lShared,nFilSup,nColSup,nFilInf,nColInf)
 
        oColumn	     := TBCOLUMNNEW('NOMBRE DEL CONCEPTO', {||CON->cNomCerCon})
        oColumn:Cargo := {{'MODI',.T.},{'ALIAS','CON'},{'FIELD','cNomCerCon'},;
+			 {'PICTURE','@!'}}
+       oBrowse:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('NOMBRE EXTRA', {||CON->cNomExtCon})
+       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','CON'},{'FIELD','cNomExtCon'},;
 			 {'PICTURE','@!'}}
        oBrowse:ADDCOLUMN(oColumn)
      *ÀDefinici¢n Columna

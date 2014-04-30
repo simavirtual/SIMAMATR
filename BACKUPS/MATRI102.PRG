@@ -272,10 +272,14 @@ FUNCTION oDefInsAdm(nFilSup,nColSup,nFilInf,nColInf,cJorTxt,cTitSup,cTitInf)
        oColumn:Cargo := {{'MODI',.F.}}
        oConsul:ADDCOLUMN(oColumn)
      *ÀDefinici¢n Columna
-				       
+
        oColumn	     := TBCOLUMNNEW('NIVEL',{||ADM->cCodigoGru})
-       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ADM'},{'FIELD','cCodigoGru'},;
-			 {'PICTURE','9999'}}
+       IF MTR->nPruebaMtr # 0
+	  oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ADM'},{'FIELD','cCodigoGru'},;
+			    {'PICTURE','9999'}}
+       ELSE
+	  oColumn:Cargo := {{'MODI',.F.}}
+       ENDIF
        oConsul:ADDCOLUMN(oColumn)
      *ÀDefinici¢n Columna
 
@@ -294,6 +298,68 @@ FUNCTION oDefInsAdm(nFilSup,nColSup,nFilInf,nColInf,cJorTxt,cTitSup,cTitInf)
        oConsul:ADDCOLUMN(oColumn)
      *ÀDefinici¢n Columna
 
+
+       oColumn := TBCOLUMNNEW('CODIGO',{||ADM->cCodigoEst})
+       IF MTR->nPruebaMtr # 0
+	  oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ADM'},{'FIELD','cCodigoEst'},;
+			    {'PICTURE','999999'}}
+       ELSE
+	  oColumn:Cargo := {{'MODI',.F.}}
+       ENDIF
+       oConsul:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('FECHA;INSCRIPCION',{||ADM->dFecInsAdm})
+       oColumn:Cargo := {{'MODI',.F.},{'ALIAS','ADM'},{'FIELD','dFecInsAdm'},;
+			 {'PICTURE','@!'}}
+       oConsul:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+
+       oColumn	     := TBCOLUMNNEW('CUPO',;
+				    {||ADM->lSiCupoEst})
+       IF MTR->nPruebaMtr # 0
+	  oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ADM'},{'FIELD','lSiCupoEst'},;
+			    {'PICTURE','@!'}}
+       ELSE
+	  oColumn:Cargo := {{'MODI',.F.}}
+       ENDIF
+       oConsul:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('MATRICULADO',;
+				    {||ADM->lSiMatrEst})
+       IF MTR->nPruebaMtr # 0
+	  oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ADM'},{'FIELD','lSiMatrEst'},;
+			    {'PICTURE','@!'}}
+       ELSE
+	  oColumn:Cargo := {{'MODI',.F.}}
+       ENDIF
+       oConsul:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('FECHA;MATRICULA',{||ADM->dFecMatEst})
+       IF MTR->nPruebaMtr # 0
+	  oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ADM'},{'FIELD','dFecMatEst'},;
+			    {'PICTURE','@!'}}
+       ELSE
+	  oColumn:Cargo := {{'MODI',.F.}}
+       ENDIF
+       oConsul:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+
+       oColumn	     := TBCOLUMNNEW('RETIRADO',;
+				    {||ADM->lRetiroAdm})
+       IF MTR->nPruebaMtr # 0
+	  oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ADM'},{'FIELD','lRetiroAdm'},;
+			    {'PICTURE','@!'}}
+       ELSE
+	  oColumn:Cargo := {{'MODI',.F.}}
+       ENDIF
+       oConsul:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
        oColumn	     := TBCOLUMNNEW('PADRES EXALUMNOS',;
 				    {||ADM->lExAlumAdm})
        oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ADM'},{'FIELD','lExAlumAdm'},;
@@ -308,30 +374,6 @@ FUNCTION oDefInsAdm(nFilSup,nColSup,nFilInf,nColInf,cJorTxt,cTitSup,cTitInf)
        oConsul:ADDCOLUMN(oColumn)
      *ÀDefinici¢n Columna
 
-       oColumn := TBCOLUMNNEW('CODIGO',{||ADM->cCodigoEst})
-       IF MTR->nPruebaMtr # 0
-	  oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ADM'},{'FIELD','cCodigoEst'},;
-			    {'PICTURE','999999'}}
-       ELSE
-	  oColumn:Cargo := {{'MODI',.F.}}
-       ENDIF
-       oConsul:ADDCOLUMN(oColumn)
-     *ÀDefinici¢n Columna
-
-
-       oColumn	     := TBCOLUMNNEW('RETIRADO',;
-				    {||ADM->lRetiroAdm})
-       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ADM'},{'FIELD','lRetiroAdm'},;
-			 {'PICTURE','@!'}}
-       oConsul:ADDCOLUMN(oColumn)
-     *ÀDefinici¢n Columna
-
-       oColumn	     := TBCOLUMNNEW('FECHA;INSCRIPCION',{||ADM->dFecInsAdm})
-       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ADM'},{'FIELD','dFecInsAdm'},;
-			 {'PICTURE','@!'}}
-       oConsul:ADDCOLUMN(oColumn)
-     *ÀDefinici¢n Columna
-     *ÀDefinici¢n Columna
 
        oColumn	     := TBCOLUMNNEW('CONSULTAR;CEDULAS',{||ADM->cPrnNitAdm})
        oColumn:Cargo := {{'MODI',.T.},{'ALIAS','ADM'},{'FIELD','cPrnNitAdm'},;

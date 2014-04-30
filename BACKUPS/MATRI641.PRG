@@ -167,7 +167,6 @@ FUNCTION Matri_641(aParam1,aParam2,aParam3)
 **********FIN LECTURA DEL CODIGO DEL ESTUDIANTE
 
 
-
 **********ACTUALIZACION DE LA INFORMACION PERSONAL
 	    cSavPan := SAVESCREEN(0,0,24,79)
 	    lDatosEst(lShared,nFilPal,1,cNalias,;

@@ -121,11 +121,20 @@ FUNCTION Matri_604(aParam1,aParam2,aParam3)
 
 *>>>>DECLARCION Y EJECUCION DEL MENU
        aMenus  := {'1<INFORMACION PERSONAL   >',;
-		   '2<COLEGIOS DE PROCEDENCIA>',;
-		   '3<EMAILS                 >'}
-       aAyuda := {'Permite Grabar la informaci¢n personal del Estudiante Antiguo',;
-		  'Permite Grabar los Colegios de Procedencia del Estudiante Antiguo',;
-		  'Permite Grabar los Emails relacionados con el Estudiante'}
+		   '2<INFORMACON ESTUDIANTE  >',;
+		   '3<INFORMACON PADRES      >',;
+		   '4<INFORMACON ACUDIENTE   >',;
+		   '5<EMAILS                 >',;
+		   '6<COLEGIOS DE PROCEDENCIA>',;
+		   '7<CONTRATANTES           >'}
+
+       aAyuda := {'Permite Actualizar la informaci¢n personal del Estudianteo',;
+		  'Permite Actualizar la informaci¢n del Estudiante',;
+		  'Permite Actualizar la informaci¢n de los Padres',;
+		  'Permite Actualizar la informaci¢n del Acudiente',;
+		  'Permite Actualixar los Emails relacionados con el Estudiante',;
+		  'Permite Actualizar los Colegios de Procedencia del Estudiante',;
+		  'Permite Actualizar los contratantes de los Estudiantes Matriculados'}
 *>>>>FIN DECLARCION Y EJECUCION DEL MENU
 
 *>>>>VALIDACION DEL LIMITE DE LA ULTIMA COLUMNA
@@ -150,11 +159,27 @@ FUNCTION Matri_604(aParam1,aParam2,aParam3)
 
        CASE nNroOpc == 2
 	    Matri_642(aParam1,aParam2,aParam3)
-	   *Colegios de Procedencia
+	   *Informaci¢n Estudiante
 
        CASE nNroOpc == 3
 	    Matri_643(aParam1,aParam2,aParam3)
+	   *Informaci¢n Padres
+
+       CASE nNroOpc == 4
+	    Matri_644(aParam1,aParam2,aParam3)
+	   *Informaci¢n Acudiente
+
+       CASE nNroOpc == 5
+	    Matri_645(aParam1,aParam2,aParam3)
 	   *Emails de los Estudiantes
+
+       CASE nNroOpc == 6
+	    Matri_646(aParam1,aParam2,aParam3)
+	   *Colegios de Procedencia
+
+       CASE nNroOpc == 7
+	    Matri_647(aParam1,aParam2,aParam3)
+	   *Actualizar Contratantes
 
        ENDCASE
        CloseAll()

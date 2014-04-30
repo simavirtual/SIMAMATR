@@ -301,10 +301,14 @@ FUNCTION Matri_401(aParam1,aParam2,aParam3)
 	       ENDCASE
 	    ENDIF
 
-	    IF EMPTY(&cNalias->dFecNacEst) .AND. EMPTY(&cNalias->cLugNacEst)
+/*
+	    IF EMPTY(&cNalias->dFecNacEst) .AND. EMPTY(&cNalias->cLugNacEst) .AND.;
+	       ANO->lMtrResAno
+
 	       cError(cNombreTes+' LE FALTA REGISTRARLE SUS DATOS PERSONALES')
 	       LOOP
 	    ENDIF
+*/
 **********FIN VALIDACION DEL CODIGO
 
 **********IMPRESION DE LA LINEA DE ESTADO
