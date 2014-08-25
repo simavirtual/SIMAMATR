@@ -105,6 +105,7 @@ FUNCTION Matri_505(aP1,aP2,aP3)
        AADD(aMenus,'3<PAGOS POR ALUMNOS  >')
        AADD(aMenus,'4<RELACION DE MOROSOS>')
        AADD(aMenus,'5<PAGOS POR GRUPOS   >')
+       AADD(aMenus,'6<PAGOS DIAN         >')
 
        aAyuda := {}
        AADD(aAyuda,'Imprime el total de la facturaci¢n del Mes.')
@@ -113,6 +114,7 @@ FUNCTION Matri_505(aP1,aP2,aP3)
        AADD(aAyuda,'Imprime la relaci¢n de los Estudiantes Morosos.')
        AADD(aAyuda,'Imprime la relaci¢n de los Estudiantes Morosos.')
        AADD(aAyuda,'Imprime el total de pagos por grupos.')
+       AADD(aAyuda,'Genera el archivo para la Dian de las matriculas.')
 *>>>>FIN DECLARACION Y EJECUCION DEL MENU
 
 *>>>>VALIDACION DEL LIMITE DE LA ULTIMA COLUMNA
@@ -155,6 +157,10 @@ FUNCTION Matri_505(aP1,aP2,aP3)
 	  CASE nNroOpc == 5
 	       Matri_555(aP1,aP2,aP3)
 	     *ÀPagos por grupos
+
+	  CASE nNroOpc == 6
+	       Matri_556(aP1,aP2,aP3)
+	     *ÀPagos de la Dian
 
 	  ENDCASE
 

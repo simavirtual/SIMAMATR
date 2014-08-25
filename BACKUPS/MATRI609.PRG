@@ -180,8 +180,9 @@ FUNCTION Matri_609(aParam1,aParam2,aParam3)
        CASE ANO->(RECCOUNT()) == 0
 	    cError('NO EXISTE CONFIGURACION DEL A¥O')
 
-       CASE ANO->nTipLisAno > 2
-	    cError('TIPO DE LISTA NO PERMITIDO '+STR(ANO->nTipLisAno,2))
+       CASE ANO->nTipLisAno <> 0 .AND. ANO->nTipLisAno <> 1 .AND.;
+	    ANO->nTipLisAno <> 99
+	    cError('TIPO DE LISTA NO PERMITIDO. '+STR(ANO->nTipLisAno,2))
 
        OTHERWISE
 	    lHayErr :=.F.
@@ -727,6 +728,171 @@ FUNCTION ListaPrv01(cCodGru,cNomEmp,cNomSis,cNomUsr,cAnoUsr,cMaeAct,cJorTxt,;
 *>>>>IMPRESION DERECHOS
        EVAL(bDerAut)
 
+       SET DEVICE TO SCREEN
+       RETURN NIL
+*>>>>FIN IMPRESION DERECHOS
+
+/*************************************************************************
+* TITULO..: IMPRESION DE LA LISTA DE CLASE                               *
+**************************************************************************
+
+AUTOR: Nelson Fern ndez G¢mez       FECHA DE CREACION: DIC 06/1994 MAR A
+       Bucaramanga, Colombia	    INICIO: 10:00 AM   DIC 06/1994 MAR
+
+OBJETIVOS:
+
+1- Imprime imprime una lista de clase por defecto del sistema.
+
+2- Retorna NIL
+
+SINTAXIS:
+
+*------------------------------------------------------------------------*
+*                              PROGRAMA                                  *
+*------------------------------------------------------------------------*/
+
+FUNCTION ListaPrv99(cCodGru,cNomEmp,cNomSis,cNomUsr,cAnoUsr,cMaeAct,cJorTxt,;
+		    cOpcSys,nNroIso,cCodIso,aTitIso,cPiePag,aPieIso,nTotPie,;
+		    aMezIso,bInsIso)
+
+*>>>>DESCRIPCION DE PARAMETROS
+/*     cCodGru                              // C¢digo del grupo
+       cNomEmp                              // Nombre de la Empresa
+       cNomSis                              // Nombre del sistema
+       cNomUsr                              // Nombre del Usuario
+       cAnoUsr                              // A¤o del usuario
+       cMaeAct                              // Maestro Actual
+       cJorTxt                              // Jornada Escogida
+       cOpcSys                              // Opci¢n del Sistema
+       nNroIso                              // N£mero Iso del Informe
+       cCodIso                              // C¢digo Iso del Informe
+       aTitIso                              // T¡tulo Iso del Informe
+       cPiePag                              // Pie de P gina por defecto
+       aPieIso      		            // Textos del pie de p gina
+       nTotPie                              // Total de Pie de p ginas
+       aMezIso                              // Campos a Mesclar
+       bInsIso                              // Block de Gestion Documental */
+*>>>>FIN DESCRIPCION DE PARAMETROS
+
+*>>>>DECLARACION DE VARIABLES
+       LOCAL nNroPag := 1                   // N£mero de p gina
+       LOCAL nTotReg := 12                  // Total de registros
+       LOCAL lPagina := .T.                 // .T. Cambio de p gina
+       LOCAL cTxtPrn := ''                  // Texto de impresi¢n
+       LOCAL aNroCol := {}                  // Columnas de impresi¢n
+       LOCAL aTitulo := {}                  // T¡tulos para impresi¢n
+       LOCAL nLenPrn := 0                   // Longitud l¡nea de impresi¢n
+       LOCAL bDerAut := NIL                 // Block Derechos de Autor
+
+       LOCAL aNivels := {}                  // Nombre de los Niveles
+       LOCAL cNombreTes := ''                  // Nombre del estudiante
+       LOCAL       i := 1                   // Contador
+
+       LOCAL GetList := {}                  // Variable del sistema
+
+       FIELD cCodigoGru                     // C¢digo del Grupo
+*>>>>FIN DECLARACION DE VARIABLES
+
+*>>>>VARIABLES PARA EL ENCABEZADO DEL INFORME
+       SELECT &cMaeAct
+
+       COUNT FOR cCodigoGru == cCodGru TO nTotReg
+      *Total de registros a imprimir
+*>>>>FIN VARIABLES PARA EL ENCABEZADO DEL INFORME
+
+*>>>>PIE DE PAGINA
+       nLenPrn := PCL('n17Stan')
+       bDerAut := {||PiePagPrn(aPieIso,nLenPrn)}
+*>>>>FIN PIE DE PAGINA
+
+*>>>>IMPRESION DEL CUERPO DEL INFORME
+       SET DEVICE TO PRINT
+       SendCodes(PCL('Reset'))
+
+       GO TOP
+       DO WHILE .NOT. EOF() .AND. nTotReg # 0
+
+**********IMPRESION DE LOS ENCABEZADOS
+	    IF lPagina
+
+*--------------ENCABEZADO DEL INFORME
+		 EncabezPrn(cNomEmp,cNomSis+cCodIso,;
+			    aTitIso[1],;
+			    aTitIso[2],;
+			    'GRUPO: '+cConverNiv(SUBS(cCodGru,1,2))+;
+						 SUBS(cCodGru,3,2),;
+			    nNroPag++,;
+			    cTotPagina(nTotReg))
+
+		 SendCodes(PCL('CondenOn'))
+*--------------FIN ENCABEZADO DEL INFORME
+
+*--------------ENCABEZADOS DE COLUMNA
+		 aNroCol := {02,06,44,02,20}
+		 aTitulo := {'No',;
+			     'CODIGO',;
+			     'APELLIDOS Y NOMBRES ',;
+			     'GR','OBSERVACIONES'}
+		 cTxtPrn := cRegPrint(aTitulo,aNroCol)
+*--------------FIN ENCABEZADOS DE COLUMNA
+
+*--------------IMPRESION DEL ENCABEZADO DE COLUMNA
+		 SendCodes(PCL({'DraftOn','Pica'}))
+		 @ PROW()+1,00 SAY REPL('-',LEN(cTxtPrn))
+		 @ PROW()+1,00 SAY cTxtPrn
+		 @ PROW()+1,00 SAY REPL('-',LEN(cTxtPrn))
+		 SendCodes(PCL({'NegraOf','DobGolOf'}))
+*--------------FIN IMPRESION DEL ENCABEZADO DE COLUMNA
+
+	    ENDIF
+**********FIN IMPRESION DE LOS ENCABEZADOS
+
+**********IMPRESION DEL CONTENIDO DEL INFORME
+	    cNombreTes := RTRIM(&cMaeAct->cApelliEst)+' '+;
+			  RTRIM(&cMaeAct->cNombreEst)+SPACE(30)
+	    cNombreTes := SUBS(cNombreTes,1,44)
+
+	    DO CASE
+	    CASE &cMaeAct->lRetiroEst
+		 aNroCol := {02,06,44,02,20}
+		 aTitulo := {STR(i,2),;
+			     &cMaeAct->cCodigoEst,;
+			     cNombreTes,;
+			     ' ',;
+			     'RETI'}
+
+	    OTHERWISE
+		 aNroCol := {02,06,44,02,20}
+		 aTitulo := {STR(i,2),;
+			     &cMaeAct->cCodigoEst,;
+			     cNombreTes,;
+			     SPACE(02),;
+			     SPACE(06)}
+	    ENDCASE
+	    cTxtPrn := cRegPrint(aTitulo,aNroCol)
+	   *Prepara la variable de impresion
+	    i++
+	    @ PROW()+1,00 SAY cTxtPrn
+**********FIN IMPRESION DEL CONTENIDO DEL INFORME
+
+**********ANALISIS PARA EL CAMBIO DE PAGINA
+	    IF PROW() > 58
+	       DerechosPrn(cNomSis,cNomEmp,nLenPrn)
+	       EJECT
+	       lPagina := .T.
+	    ELSE
+	       lPagina := .F.
+	    ENDIF
+**********FIN ANALISIS PARA EL CAMBIO DE PAGINA
+
+	  SKIP
+
+       ENDDO
+*>>>>FIN IMPRESION DEL CUERPO DEL INFORME
+
+*>>>>IMPRESION DERECHOS
+       EVAL(bDerAut)
+       EJECT
        SET DEVICE TO SCREEN
        RETURN NIL
 *>>>>FIN IMPRESION DERECHOS

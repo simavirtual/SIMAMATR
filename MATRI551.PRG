@@ -581,20 +581,17 @@ FUNCTION Matri_551(aParam1,aParam2,aParam3)
        bDerAut := {||DerechosPrn(cNomSis,cNomEmp,nLenPrn)}
 *>>>>FIN ANALISIS PARA CENTRAR EL INFORME
 
-*>>>>SELECION DEL TIPO DE IMPRESION
-       IF lShared
-	  NNETSETQ('COLA')
-	  NNETCAPBEG(1)
-	  IF !lPregunta('DESEA IMPRIMIR EN RED? No Si')
-	     NNETCAPEND(1)
+*>>>>ACTIVACION DE LA IMPRESORA
+       IF MTR->lPrnArcMtr
+	  SET DEVICE TO PRINT
+       ELSE
+	  FilePrn = SUBS(MTR->cSerFacMtr,1,1)+'fac'+cAnoUsr
+	  nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,MTR->cOpcPrnMtr,.T.,.T.,,PathDoc)
+	  IF EMPTY(nOpcPrn)
+	     RETURN NIL
 	  ENDIF
        ENDIF
-*>>>>FIN SELECION DEL TIPO DE IMPRESION
 
-*>>>>ACTIVACION DE LA IMPRESORA
-       IF !Printer_on(MTR->lPrnArcMtr)
-	   RETURN NIL
-       ENDIF
        @ PROW(),00 SAY INICIALIZA
        EVAL(bCabeza)
       *Impresi¢n del Encabezado
@@ -1095,6 +1092,8 @@ FUNCTION Matri_551(aParam1,aParam2,aParam3)
        DerechosPrn(cNomSis,cNomEmp,n17Stan)
        @ PROW()-PROW(),00 SAY ' '
       *Saca la ultima linea
+
+       VerPrn(nOpcPrn,FilePrn)
 
        CLOSE ALL
        SET DEVICE TO SCREEN

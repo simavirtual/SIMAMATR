@@ -177,7 +177,7 @@ FUNCTION CreaDbfAdm(lShared,PathAdm,FileAdm,lIntUno,fNtxAdm,aStrDbf)
 
        AADD(aDbfStr,{"nEstratEst","Numeric"  ,02,0}) // N£mero del Estrato del Estudiante
        AADD(aDbfStr,{"cConcepEst","Character",16,0}) // Conceptos por cobrar
-       AADD(aDbfStr,{"cCole13Est","Character",84,0}) // Procedencia de Preescolar
+       AADD(aDbfStr,{"cCole13Est","Character",84,0}) // Procedencia de Caminadores
        AADD(aDbfStr,{"cCole00Est","Character",84,0}) // Procedencia de Transicion
        AADD(aDbfStr,{"cCole01Est","Character",84,0}) // Procedencia de Primero
        AADD(aDbfStr,{"cCole02Est","Character",84,0}) // Procedencia de Segundo
@@ -190,7 +190,10 @@ FUNCTION CreaDbfAdm(lShared,PathAdm,FileAdm,lIntUno,fNtxAdm,aStrDbf)
        AADD(aDbfStr,{"cCole09Est","Character",84,0}) // Procedencia de Noveno
        AADD(aDbfStr,{"cCole10Est","Character",84,0}) // Procedencia de D‚cimo
        AADD(aDbfStr,{"cCole11Est","Character",84,0}) // Procedencia de Und‚cimo
-       AADD(aDbfStr,{"cCole12Est","Character",84,0}) // Procedencia de DuoD‚cimo
+       AADD(aDbfStr,{"cCole12Est","Character",84,0}) // Procedencia de Maternales
+       AADD(aDbfStr,{"cCole14Est","Character",84,0}) // Procedencia de Parvulos
+       AADD(aDbfStr,{"cCole15Est","Character",84,0}) // Procedencia de PreJardin
+       AADD(aDbfStr,{"cCole16Est","Character",84,0}) // Procedencia de Jardin
        AADD(aDbfStr,{"cCodigoMat","Character",04,0}) // C¢digo de la materia de la Especialidad
      *ÀColegios de Procedencia
 *>>>>FIN DECLARACION DE LA ESTRUCTURA

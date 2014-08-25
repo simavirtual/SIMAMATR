@@ -1987,6 +1987,7 @@ FUNCTION nRecMtr07(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
 	  Post('MZP 0.0,9.0; BOX 6.5,0.8;')
 	  Post('MZP 12.5,9.0; BOX 2.5,0.8;')
 	  Post('MZP 17.0,10.2; TEXT "ALUMNO";')
+	  Post('MZP 0.0,11.2; TEXT ">-------------------------------------------------------------------------------<";')
 
 	  Post('CMNT "BOLANTE COLEGIO";')
 	  Post('MZP 0.0,11.5; BOX 20.33,7.3;')
@@ -2007,6 +2008,8 @@ FUNCTION nRecMtr07(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
 	  Post('MZP 0.0,18.0; BOX 6.5,0.8;')
 	  Post('MZP 12.5,18.0; BOX 2.5,0.8;')
 	  Post('MZP 17.0,19.2; TEXT "COLEGIO";')
+	  Post('MZP 0.0,19.7; TEXT ">-------------------------------------------------------------------------------<";')
+
 
 	  Post('CMNT "BOLANTE BANCO";')
 	  Post('MZP 0.0,20.0; BOX 20.33,6.5;')
@@ -2276,12 +2279,18 @@ FUNCTION nRecMtr07(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
 
        ENDIF
 
-/*
-       cMensaj := ''
-       cCodMzp := '0.3,10.2;'
-       LineaMzp(cCodMzp,cMensaj,1)
-      *Impresion del mensaje de la facturacion
-*/
+
+       IF nRecNro == 7
+
+	  DO CASE
+	  CASE cNitEmp == '8600099850'
+	       Post('MZP 0.3,10.2; TEXT "SOLO SE RECIBEN PAGOS EN EFECTIVO O CHEQUES DE GERENCIA.";')
+	       Post('MZP 0.3,10.5; TEXT "LA CONGREGACION DE LOS HERMANOS DE LAS ESCUELAS CRISTIANAS REALIZA EL REPORTE DE HABITO DE PAGO DE TODOS LOS CONTRATANTES AL OPERADOR";')
+	       Post('MZP 0.3,10.8; TEXT "DE INFORMACION DATACREDITO. RECUERDE QUE EL NO PAGO DE LOS SERVICIOS EDUCATIVOS SE REFLEJARA EN SU HISTORIA DE CREDITO. LEY 1266 DE 2008.";')
+	  ENDCASE
+
+       ENDIF
+
 
        SET FIXED ON
 *>>>>FIN IMPRESION DEL TOTAL A PAGAR EN FECHA EXTEMPORANEA

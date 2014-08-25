@@ -2611,7 +2611,7 @@ FUNCTION lParam0101(aParams,;
 		    PathW01,PathW02,PathW03,PathW04,PathW05,;
 		    PathW06,PathW07,PathW08,PathW09,PathW10,;
 		    PathUno,PathDos,PathTre,PathCua,;
-		    cMaeAlu,cMaeAct,cJorTxt)
+		    cMaeAlu,cMaeAct,cJorTxt,cJornad)
 
 *>>>>DESCRIPCION DE PARAMETROS
 /*     aParams                              // Parametros Generales
@@ -2660,7 +2660,8 @@ FUNCTION lParam0101(aParams,;
 
        cMaeAlu                              // @Maestros habilitados
        cMaeAct                              // @Maestro Activo
-       cJorTxt                              // @Jornada escogida */
+       cJorTxt                              // @Jornada escogida
+       cJornad                              // @Jornadas habilitadas */
      *ÀDetalles Acad‚micos
 *>>>>FIN DESCRIPCION DE PARAMETROS
 
@@ -2765,6 +2766,7 @@ FUNCTION lParam0101(aParams,;
        cMaeAlu := xParams(aParams,'cMaeAlu')
        cMaeAct := xParams(aParams,'cMaeAct')
        cJorTxt := xParams(aParams,'cJorTxt')
+       cJornad := xParams(aParams,'cJornad')
 
        IF cMaeAlu == NIL .OR.;
 	  cMaeAct == NIL .OR.;

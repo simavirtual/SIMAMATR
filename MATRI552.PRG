@@ -575,10 +575,16 @@ FUNCTION Matri_552(aParam1,aParam2,aParam3)
 *>>>>FIN ANALISIS PARA CENTRAR EL INFORME
 
 *>>>>ACTIVACION DE LA IMPRESORA
-       ActivaPrn(lShared,cNomSis,PathSis,fSimMtr,'cColaAcMtr','Mtr')
-       IF !Printer_on(MTR->lPrnArcMtr)
-	   RETURN NIL
+       IF MTR->lPrnArcMtr
+	  SET DEVICE TO PRINT
+       ELSE
+	  FilePrn = SUBS(MTR->cSerFacMtr,1,1)+'pag'+cAnoUsr
+	  nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,MTR->cOpcPrnMtr,.T.,.T.,,PathDoc)
+	  IF EMPTY(nOpcPrn)
+	     RETURN NIL
+	  ENDIF
        ENDIF
+
        @ PROW(),00 SAY INICIALIZA
        EVAL(bCabeza)
       *Impresi¢n del Encabezado
@@ -963,6 +969,8 @@ FUNCTION Matri_552(aParam1,aParam2,aParam3)
        DerechosPrn(cNomSis,cNomEmp,n17Stan)
        @ PROW()-PROW(),00 SAY ' '
       *Saca la ultima linea
+
+       VerPrn(nOpcPrn,FilePrn)
 
        CLOSE ALL
        SET DEVICE TO SCREEN

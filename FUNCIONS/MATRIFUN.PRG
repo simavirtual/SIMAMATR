@@ -2279,6 +2279,7 @@ FUNCTION RevisaCont(aP1)
 	    !FILE(PathUno+'\'+PathSis+'\'+FileObG) .AND.;
 	    !FILE(PathUno+'\'+PathSis+'\'+FileToG) .AND.;
 	    !FILE(PathUno+'\'+PathSis+'\'+FileSoG) .AND.;
+	    !FILE(PathUno+'\'+cPatSis+'\'+fColPrc) .AND.;
 	    !FILE(PathUno+'\'+cPatSis+'\'+fPazEst+cAnoSis+ExtFile) .AND.;
 	    !FILE(PathUno+'\'+cPatSis+'\'+fDpzEst+cAnoSis+ExtFile)
 
@@ -2306,6 +2307,9 @@ FUNCTION RevisaCont(aP1)
 
 	      CreaDbfDpz(lShared,nModCry,PathUno+'\'+cPatSis,;
 			 fDpzEst+cAnoSis+ExtFile)
+	      Termometro(80)
+
+	      CreaDbfCol(lShared,nModCry,PathUno+'\'+cPatSis,fColPrc)
 	      Termometro(100)
 ************FIN CREACION DE ESTRUCTURAS GENERALES
 
@@ -2356,6 +2360,14 @@ FUNCTION RevisaCont(aP1)
 	      ELSE
 		 nActStrDpz(lShared,nModCry,PathUno+'\'+cPatSis,;
 			    fDpzEst+cAnoSis+ExtFile)
+	      ENDIF
+
+	      IF !FILE(PathUno+'\'+cPatSis+'\'+fColPrc)
+		 RecuDbfCol(lShared,nModCry,PathUno+'\'+cPatSis,;
+			    fColPrc)
+	      ELSE
+		 nActStrCol(lShared,nModCry,PathUno+'\'+cPatSis,;
+			    fColPrc)
 	      ENDIF
 ************FIN RECUPERACION O ACTUALIZACION DE ESTRUCTURAS GENERALES
 

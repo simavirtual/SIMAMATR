@@ -243,6 +243,9 @@ OBJETIVOS:
 
        LOCAL fDpzEst := 'DEUPAZ'	           // Ej: DEUPAZ01.DAT
      *ÀArchivo de Deudas del Paz y Salvo
+
+       LOCAL fColPrc := 'COLEPROC'+ExtFile         // Ej: COLEPROC.DAT
+     *ÀArchivo de Colegios de Procedencia.
 *>>>>FIN DECLARACION DE ARCHIVOS COMPARTIDOS
 
 *>>>>DECLARACION DE ARCHIVOS COMPARTIDOS.SIMACART

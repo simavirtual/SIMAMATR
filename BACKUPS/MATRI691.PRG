@@ -183,6 +183,13 @@ FUNCTION Matri_691(aParam1,aParam2,aParam3,;
 				 bInsIso)
 		    *ÀLista de Clase sin Encabezado
 
+		 CASE ANO->nTipLisAno == 99
+		      ListaPrv99(cCodGru,cNomEmp,cNomSis,cNomUsr,cAnoUsr,;
+				 cMaeAct,cJorTxt,cOpcSys,nNroIso,cCodIso,;
+				 aTitIso,cPiePag,aPieIso,nTotPie,aMezIso,;
+				 bInsIso)
+		    *ÀLista de Clase por defecto
+
 		 ENDCASE
 *--------------FIN LISTAS DE CLASE
 

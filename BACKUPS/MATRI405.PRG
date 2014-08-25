@@ -130,6 +130,7 @@ FUNCTION Matri_405(aParam1,aParam2,aParam3)
        LOCAL cMaeAlu := ''                  // Maestros habilitados
        LOCAL cMaeAct := ''                  // Maestro Activo
        LOCAL cJorTxt := ''                  // Jornada escogida
+       LOCAL cJornad := ''                  // Jornadas habilitadas
      *ÀDetalles Acad‚micos
 
        LOCAL aParams := {}                  // Parametros Generales
@@ -145,7 +146,7 @@ FUNCTION Matri_405(aParam1,aParam2,aParam3)
 		       @PathW01,@PathW02,@PathW03,@PathW04,@PathW05,;
 		       @PathW06,@PathW07,@PathW08,@PathW09,@PathW10,;
 		       @PathUno,@PathDos,@PathTre,@PathCua,;
-		       @cMaeAlu,@cMaeAct,@cJorTxt)
+		       @cMaeAlu,@cMaeAct,@cJorTxt,@cJornad)
 	  CloseAll()
 	  RETURN NIL
        ENDIF
@@ -183,6 +184,12 @@ FUNCTION Matri_405(aParam1,aParam2,aParam3)
 	     CloseAll()
 	     RETURN NIL
 	  ENDIF
+
+	  MaeHab(lShared,nModCry,;
+		 cAnoAnt+'.'+cIniJor(SUBS(cJornad,1,1))+'\'+;
+		 fMtrAno+cAnoAnt+ExtFile,;
+		 @cMaeAlu,@cJornad,'ANO->cMaeHabAno','ANO->cJorHabAno')
+       *ÀMaestros habilitados.
 
        ENDIF
 *>>>>FIN LECTURA Y VALIDACION DEL A¥O
