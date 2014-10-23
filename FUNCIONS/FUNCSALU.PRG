@@ -104,7 +104,7 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cLugNacEst","Character",020,0}) // Lugar de nacimiento
        AADD(aDbfAlu,{"cDocNitEst","Character",016,0}) // Documento de Identidad
        AADD(aDbfAlu,{"cLugNitEst","Character",020,0}) // Lugar del Documento
-       AADD(aDbfAlu,{"cTipNitEst","Character",003,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
+       AADD(aDbfAlu,{"cTipNitEst","Character",004,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
        AADD(aDbfAlu,{"lFotNitEst","Logical"  ,001,0}) // .T. Fotocopia
        AADD(aDbfAlu,{"lSexFemEst","Logical"  ,001,0}) // .T. Sexo Femenino .F. Sexo Masculino
        AADD(aDbfAlu,{"cDireccEst","Character",100,0}) // Direccion de la casa
@@ -173,7 +173,7 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cLugPadEst","Character",020,0}) // Lugar de nacimiento
        AADD(aDbfAlu,{"cPadNitEst","Character",016,0}) // C‚dula del padre
        AADD(aDbfAlu,{"cPadLugEst","Character",016,0}) // Lugar de la c‚dula
-       AADD(aDbfAlu,{"cPadTntEst","Character",003,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
+       AADD(aDbfAlu,{"cPadTntEst","Character",004,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
        AADD(aDbfAlu,{"lPadFotEst","Logical"  ,001,0}) // .T. Fotocopia de la Cedula
        AADD(aDbfAlu,{"cProPadEst","Character",026,0}) // Profesi¢n del padre
        AADD(aDbfAlu,{"cEmpPadEst","Character",026,0}) // Empresa del padre
@@ -197,7 +197,7 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cLugMadEst","Character",020,0}) // Lugar de nacimiento
        AADD(aDbfAlu,{"cMadNitEst","Character",016,0}) // C‚dula de la madre
        AADD(aDbfAlu,{"cMadLugEst","Character",016,0}) // Lugar de la c‚dula
-       AADD(aDbfAlu,{"cMadTntEst","Character",003,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
+       AADD(aDbfAlu,{"cMadTntEst","Character",004,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
        AADD(aDbfAlu,{"lMadFotEst","Logical"  ,001,0}) // .T. Fotocopia de la Cedula
        AADD(aDbfAlu,{"cProMadEst","Character",026,0}) // Profesi¢n de la madre
        AADD(aDbfAlu,{"cEmpMadEst","Character",026,0}) // Empresa de la madre
@@ -221,7 +221,7 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cLugAcuEst","Character",020,0}) // Lugar de nacimiento
        AADD(aDbfAlu,{"cAcuNitEst","Character",016,0}) // C‚dula del Acudiente
        AADD(aDbfAlu,{"cAcuLugEst","Character",016,0}) // Lugar del Acudiente
-       AADD(aDbfAlu,{"cAcuTntEst","Character",003,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
+       AADD(aDbfAlu,{"cAcuTntEst","Character",004,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
        AADD(aDbfAlu,{"lAcuFotEst","Logical"  ,001,0}) // .T. Fotocopia de la Cedula
        AADD(aDbfAlu,{"cProAcuEst","Character",026,0}) //*Profesi¢n del Acudiente
        AADD(aDbfAlu,{"cEmpAcuEst","Character",026,0}) //*Empresa del Acudiente
@@ -269,7 +269,7 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cParRe1Est","Character",016,0}) // Parentesco de la Referencia No. 1
        AADD(aDbfAlu,{"cRe1NitEst","Character",016,0}) // C‚dula de la Referencia No.1
        AADD(aDbfAlu,{"cRe1LugEst","Character",016,0}) // Lugar de la Referencia No. 1
-       AADD(aDbfAlu,{"cRe1TntEst","Character",003,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
+       AADD(aDbfAlu,{"cRe1TntEst","Character",004,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
        AADD(aDbfAlu,{"cDirRe1Est","Character",100,0}) // Direccion de la casa de la Referencia No. 1
        AADD(aDbfAlu,{"cBarRe1Est","Character",016,0}) // Barrio de la direcci¢n de la Referencia No. 1
        AADD(aDbfAlu,{"cCiuRe1Est","Character",030,0}) // Ciudad de la Referencia
