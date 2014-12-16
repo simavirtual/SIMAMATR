@@ -104,7 +104,7 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cLugNacEst","Character",020,0}) // Lugar de nacimiento
        AADD(aDbfAlu,{"cDocNitEst","Character",016,0}) // Documento de Identidad
        AADD(aDbfAlu,{"cLugNitEst","Character",020,0}) // Lugar del Documento
-       AADD(aDbfAlu,{"cTipNitEst","Character",003,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
+       AADD(aDbfAlu,{"cTipNitEst","Character",004,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
        AADD(aDbfAlu,{"lFotNitEst","Logical"  ,001,0}) // .T. Fotocopia
        AADD(aDbfAlu,{"lSexFemEst","Logical"  ,001,0}) // .T. Sexo Femenino .F. Sexo Masculino
        AADD(aDbfAlu,{"cDireccEst","Character",100,0}) // Direccion de la casa
@@ -173,7 +173,7 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cLugPadEst","Character",020,0}) // Lugar de nacimiento
        AADD(aDbfAlu,{"cPadNitEst","Character",016,0}) // C‚dula del padre
        AADD(aDbfAlu,{"cPadLugEst","Character",016,0}) // Lugar de la c‚dula
-       AADD(aDbfAlu,{"cPadTntEst","Character",003,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
+       AADD(aDbfAlu,{"cPadTntEst","Character",004,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
        AADD(aDbfAlu,{"lPadFotEst","Logical"  ,001,0}) // .T. Fotocopia de la Cedula
        AADD(aDbfAlu,{"cProPadEst","Character",026,0}) // Profesi¢n del padre
        AADD(aDbfAlu,{"cEmpPadEst","Character",026,0}) // Empresa del padre
@@ -197,7 +197,7 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cLugMadEst","Character",020,0}) // Lugar de nacimiento
        AADD(aDbfAlu,{"cMadNitEst","Character",016,0}) // C‚dula de la madre
        AADD(aDbfAlu,{"cMadLugEst","Character",016,0}) // Lugar de la c‚dula
-       AADD(aDbfAlu,{"cMadTntEst","Character",003,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
+       AADD(aDbfAlu,{"cMadTntEst","Character",004,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
        AADD(aDbfAlu,{"lMadFotEst","Logical"  ,001,0}) // .T. Fotocopia de la Cedula
        AADD(aDbfAlu,{"cProMadEst","Character",026,0}) // Profesi¢n de la madre
        AADD(aDbfAlu,{"cEmpMadEst","Character",026,0}) // Empresa de la madre
@@ -221,7 +221,7 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cLugAcuEst","Character",020,0}) // Lugar de nacimiento
        AADD(aDbfAlu,{"cAcuNitEst","Character",016,0}) // C‚dula del Acudiente
        AADD(aDbfAlu,{"cAcuLugEst","Character",016,0}) // Lugar del Acudiente
-       AADD(aDbfAlu,{"cAcuTntEst","Character",003,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
+       AADD(aDbfAlu,{"cAcuTntEst","Character",004,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
        AADD(aDbfAlu,{"lAcuFotEst","Logical"  ,001,0}) // .T. Fotocopia de la Cedula
        AADD(aDbfAlu,{"cProAcuEst","Character",026,0}) //*Profesi¢n del Acudiente
        AADD(aDbfAlu,{"cEmpAcuEst","Character",026,0}) //*Empresa del Acudiente
@@ -242,7 +242,7 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cPazSdoEst","Character",020,0}) // Paz y Salvo. Espacio en Blanco =>SI Paz y Salvo. Diferente de Espacio =>NO Paz y Salvo
        AADD(aDbfAlu,{"cObsLibEst","Character",500,0}) // Observaci¢n para el libro.
        AADD(aDbfAlu,{"cObsRetEst","Character",100,0}) // Observaci¢n del Retiro.
-       AADD(aDbfAlu,{"cCole13Est","Character",084,0}) // Procedencia de Preescolar
+       AADD(aDbfAlu,{"cCole13Est","Character",084,0}) // Procedencia de Caminadores
        AADD(aDbfAlu,{"cCole00Est","Character",084,0}) // Procedencia de Transici¢n
        AADD(aDbfAlu,{"cCole01Est","Character",084,0}) // Procedencia de Primero
        AADD(aDbfAlu,{"cCole02Est","Character",084,0}) // Procedencia de Segundo
@@ -255,7 +255,10 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cCole09Est","Character",084,0}) // Procedencia de Noveno
        AADD(aDbfAlu,{"cCole10Est","Character",084,0}) // Procedencia de D‚cimo
        AADD(aDbfAlu,{"cCole11Est","Character",084,0}) // Procedencia de Und‚cimo
-       AADD(aDbfAlu,{"cCole12Est","Character",084,0}) // Procedencia de DuoD‚cimo
+       AADD(aDbfAlu,{"cCole12Est","Character",084,0}) // Procedencia de Maternales
+       AADD(aDbfAlu,{"cCole14Est","Character",084,0}) // Procedencia de Parvulos
+       AADD(aDbfAlu,{"cCole15Est","Character",084,0}) // Procedencia de Pre-Jardin
+       AADD(aDbfAlu,{"cCole16Est","Character",084,0}) // Procedencia de Jardin
        AADD(aDbfAlu,{"cVotEscEst","Character",030,0}) // Voto Escolar del Estudiante
        AADD(aDbfAlu,{"cCodigoMat","Character",004,0}) // C¢digo de la materia del area Especializada
        AADD(aDbfAlu,{"cAnoEstMae","Character",068,0}) // A¤os en que estudio en el colegio
@@ -266,7 +269,7 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cParRe1Est","Character",016,0}) // Parentesco de la Referencia No. 1
        AADD(aDbfAlu,{"cRe1NitEst","Character",016,0}) // C‚dula de la Referencia No.1
        AADD(aDbfAlu,{"cRe1LugEst","Character",016,0}) // Lugar de la Referencia No. 1
-       AADD(aDbfAlu,{"cRe1TntEst","Character",003,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
+       AADD(aDbfAlu,{"cRe1TntEst","Character",004,0}) // Tipo de Documento TI=>Tarjeta de Identidad CC=>Cedula de Ciudadania CE => Cedula de Extrajeria NI => Nit
        AADD(aDbfAlu,{"cDirRe1Est","Character",100,0}) // Direccion de la casa de la Referencia No. 1
        AADD(aDbfAlu,{"cBarRe1Est","Character",016,0}) // Barrio de la direcci¢n de la Referencia No. 1
        AADD(aDbfAlu,{"cCiuRe1Est","Character",030,0}) // Ciudad de la Referencia
@@ -2573,10 +2576,11 @@ FUNCTION lProceEst(lShared,nFilInf,nColInf,cCodEst,;
        LOCAL nNroFil := 0                   // Fila de lectura
        LOCAL nNroCol := 0                   // Columna de lectura
        LOCAL nNroReg := 0                   // N£mero de Registro
+       LOCAL nOpcion := 0                   // N£mero de Opci¢n
 
        LOCAL       i := 0                   // Contador
        LOCAL aNroCol := {}                  // N£mero de Columnas
-       LOCAL aProced[15,4]                  // Procendencia del Estudiante
+       LOCAL aProced[17,4]                  // Procendencia del Estudiante
        LOCAL GetList    := {}               // Variable del sistema
 *>>>>FIN DECLARACION DE VARIABLES
 
@@ -2602,78 +2606,103 @@ FUNCTION lProceEst(lShared,nFilInf,nColInf,cCodEst,;
 
 **********INICIALIZACION DE LAS VARIABLES TEMPORALES
 	    IF lGrabar
-	       aProced[1,1] := SUBS(&cNalias->cCole13Est,01,04)  // A¤o
-	       aProced[1,2] := SUBS(&cNalias->cCole13Est,05,10)  // Nivel
-	       aProced[1,3] := SUBS(&cNalias->cCole13Est,15,40)  // Colegio
-	       aProced[1,4] := SUBS(&cNalias->cCole13Est,55,20)  // Ciudad
 
-	       aProced[2,1] := SUBS(&cNalias->cCole00Est,01,04)  // A¤o
-	       aProced[2,2] := SUBS(&cNalias->cCole00Est,05,10)  // Nivel
-	       aProced[2,3] := SUBS(&cNalias->cCole00Est,15,40)  // Colegio
-	       aProced[2,4] := SUBS(&cNalias->cCole00Est,55,20)  // Ciudad
+	       aProced[1,1] := SUBS(&cNalias->cCole01Est,01,04)  // A¤o
+	       aProced[1,2] := SUBS(&cNalias->cCole01Est,05,10)  // Nivel
+	       aProced[1,3] := SUBS(&cNalias->cCole01Est,15,40)  // Colegio
+	       aProced[1,4] := SUBS(&cNalias->cCole01Est,55,20)  // Ciudad
 
-	       aProced[3,1] := SUBS(&cNalias->cCole01Est,01,04)  // A¤o
-	       aProced[3,2] := SUBS(&cNalias->cCole01Est,05,10)  // Nivel
-	       aProced[3,3] := SUBS(&cNalias->cCole01Est,15,40)  // Colegio
-	       aProced[3,4] := SUBS(&cNalias->cCole01Est,55,20)  // Ciudad
+	       aProced[2,1] := SUBS(&cNalias->cCole02Est,01,04)  // A¤o
+	       aProced[2,2] := SUBS(&cNalias->cCole02Est,05,10)  // Nivel
+	       aProced[2,3] := SUBS(&cNalias->cCole02Est,15,40)  // Colegio
+	       aProced[2,4] := SUBS(&cNalias->cCole02Est,55,20)  // Ciudad
 
-	       aProced[4,1] := SUBS(&cNalias->cCole02Est,01,04)  // A¤o
-	       aProced[4,2] := SUBS(&cNalias->cCole02Est,05,10)  // Nivel
-	       aProced[4,3] := SUBS(&cNalias->cCole02Est,15,40)  // Colegio
-	       aProced[4,4] := SUBS(&cNalias->cCole02Est,55,20)  // Ciudad
+	       aProced[3,1] := SUBS(&cNalias->cCole03Est,01,04)  // A¤o
+	       aProced[3,2] := SUBS(&cNalias->cCole03Est,05,10)  // Nivel
+	       aProced[3,3] := SUBS(&cNalias->cCole03Est,15,40)  // Colegio
+	       aProced[3,4] := SUBS(&cNalias->cCole03Est,55,20)  // Ciudad
 
-	       aProced[5,1] := SUBS(&cNalias->cCole03Est,01,04)  // A¤o
-	       aProced[5,2] := SUBS(&cNalias->cCole03Est,05,10)  // Nivel
-	       aProced[5,3] := SUBS(&cNalias->cCole03Est,15,40)  // Colegio
-	       aProced[5,4] := SUBS(&cNalias->cCole03Est,55,20)  // Ciudad
+	       aProced[4,1] := SUBS(&cNalias->cCole04Est,01,04)  // A¤o
+	       aProced[4,2] := SUBS(&cNalias->cCole04Est,05,10)  // Nivel
+	       aProced[4,3] := SUBS(&cNalias->cCole04Est,15,40)  // Colegio
+	       aProced[4,4] := SUBS(&cNalias->cCole04Est,55,20)  // Ciudad
 
-	       aProced[6,1] := SUBS(&cNalias->cCole04Est,01,04)  // A¤o
-	       aProced[6,2] := SUBS(&cNalias->cCole04Est,05,10)  // Nivel
-	       aProced[6,3] := SUBS(&cNalias->cCole04Est,15,40)  // Colegio
-	       aProced[6,4] := SUBS(&cNalias->cCole04Est,55,20)  // Ciudad
+	       aProced[5,1] := SUBS(&cNalias->cCole05Est,01,04)  // A¤o
+	       aProced[5,2] := SUBS(&cNalias->cCole05Est,05,10)  // Nivel
+	       aProced[5,3] := SUBS(&cNalias->cCole05Est,15,40)  // Colegio
+	       aProced[5,4] := SUBS(&cNalias->cCole05Est,55,20)  // Ciudad
 
-	       aProced[7,1] := SUBS(&cNalias->cCole05Est,01,04)  // A¤o
-	       aProced[7,2] := SUBS(&cNalias->cCole05Est,05,10)  // Nivel
-	       aProced[7,3] := SUBS(&cNalias->cCole05Est,15,40)  // Colegio
-	       aProced[7,4] := SUBS(&cNalias->cCole05Est,55,20)  // Ciudad
+	       aProced[6,1] := SUBS(&cNalias->cCole06Est,01,04)  // A¤o
+	       aProced[6,2] := SUBS(&cNalias->cCole06Est,05,10)  // Nivel
+	       aProced[6,3] := SUBS(&cNalias->cCole06Est,15,40)  // Colegio
+	       aProced[6,4] := SUBS(&cNalias->cCole06Est,55,20)  // Ciudad
 
-	       aProced[8,1] := SUBS(&cNalias->cCole06Est,01,04)  // A¤o
-	       aProced[8,2] := SUBS(&cNalias->cCole06Est,05,10)  // Nivel
-	       aProced[8,3] := SUBS(&cNalias->cCole06Est,15,40)  // Colegio
-	       aProced[8,4] := SUBS(&cNalias->cCole06Est,55,20)  // Ciudad
+	       aProced[7,1] := SUBS(&cNalias->cCole07Est,01,04)  // A¤o
+	       aProced[7,2] := SUBS(&cNalias->cCole07Est,05,10)  // Nivel
+	       aProced[7,3] := SUBS(&cNalias->cCole07Est,15,40)  // Colegio
+	       aProced[7,4] := SUBS(&cNalias->cCole07Est,55,20)  // Ciudad
 
-	       aProced[9,1] := SUBS(&cNalias->cCole07Est,01,04)  // A¤o
-	       aProced[9,2] := SUBS(&cNalias->cCole07Est,05,10)  // Nivel
-	       aProced[9,3] := SUBS(&cNalias->cCole07Est,15,40)  // Colegio
-	       aProced[9,4] := SUBS(&cNalias->cCole07Est,55,20)  // Ciudad
+	       aProced[8,1] := SUBS(&cNalias->cCole08Est,01,04)  // A¤o
+	       aProced[8,2] := SUBS(&cNalias->cCole08Est,05,10)  // Nivel
+	       aProced[8,3] := SUBS(&cNalias->cCole08Est,15,40)  // Colegio
+	       aProced[8,4] := SUBS(&cNalias->cCole08Est,55,20)  // Ciudad
 
-	       aProced[10,1] := SUBS(&cNalias->cCole08Est,01,04)  // A¤o
-	       aProced[10,2] := SUBS(&cNalias->cCole08Est,05,10)  // Nivel
-	       aProced[10,3] := SUBS(&cNalias->cCole08Est,15,40)  // Colegio
-	       aProced[10,4] := SUBS(&cNalias->cCole08Est,55,20)  // Ciudad
+	       aProced[9,1] := SUBS(&cNalias->cCole09Est,01,04)  // A¤o
+	       aProced[9,2] := SUBS(&cNalias->cCole09Est,05,10)  // Nivel
+	       aProced[9,3] := SUBS(&cNalias->cCole09Est,15,40)  // Colegio
+	       aProced[9,4] := SUBS(&cNalias->cCole09Est,55,20)  // Ciudad
 
-	       aProced[11,1] := SUBS(&cNalias->cCole09Est,01,04)  // A¤o
-	       aProced[11,2] := SUBS(&cNalias->cCole09Est,05,10)  // Nivel
-	       aProced[11,3] := SUBS(&cNalias->cCole09Est,15,40)  // Colegio
-	       aProced[11,4] := SUBS(&cNalias->cCole09Est,55,20)  // Ciudad
+	       aProced[10,1] := SUBS(&cNalias->cCole10Est,01,04)  // A¤o
+	       aProced[10,2] := SUBS(&cNalias->cCole10Est,05,10)  // Nivel
+	       aProced[10,3] := SUBS(&cNalias->cCole10Est,15,40)  // Colegio
+	       aProced[10,4] := SUBS(&cNalias->cCole10Est,55,20)  // Ciudad
 
-	       aProced[12,1] := SUBS(&cNalias->cCole10Est,01,04)  // A¤o
-	       aProced[12,2] := SUBS(&cNalias->cCole10Est,05,10)  // Nivel
-	       aProced[12,3] := SUBS(&cNalias->cCole10Est,15,40)  // Colegio
-	       aProced[12,4] := SUBS(&cNalias->cCole10Est,55,20)  // Ciudad
+	       aProced[11,1] := SUBS(&cNalias->cCole11Est,01,04)  // A¤o
+	       aProced[11,2] := SUBS(&cNalias->cCole11Est,05,10)  // Nivel
+	       aProced[11,3] := SUBS(&cNalias->cCole11Est,15,40)  // Colegio
+	       aProced[11,4] := SUBS(&cNalias->cCole11Est,55,20)  // Ciudad
 
-	       aProced[13,1] := SUBS(&cNalias->cCole11Est,01,04)  // A¤o
-	       aProced[13,2] := SUBS(&cNalias->cCole11Est,05,10)  // Nivel
-	       aProced[13,3] := SUBS(&cNalias->cCole11Est,15,40)  // Colegio
-	       aProced[13,4] := SUBS(&cNalias->cCole11Est,55,20)  // Ciudad
+	       aProced[12,1] := SUBS(&cNalias->cCole12Est,01,04)  // A¤o
+	       aProced[12,2] := SUBS(&cNalias->cCole12Est,05,10)  // Nivel
+	       aProced[12,3] := SUBS(&cNalias->cCole12Est,15,40)  // Colegio
+	       aProced[12,4] := SUBS(&cNalias->cCole12Est,55,20)  // Ciudad
 
-	       aProced[14,1] := SUBS(&cNalias->cCole12Est,01,04)  // A¤o
-	       aProced[14,2] := SUBS(&cNalias->cCole12Est,05,10)  // Nivel
-	       aProced[14,3] := SUBS(&cNalias->cCole12Est,15,40)  // Colegio
-	       aProced[14,4] := SUBS(&cNalias->cCole12Est,55,20)  // Ciudad
+	       aProced[13,1] := SUBS(&cNalias->cCole13Est,01,04)  // A¤o
+	       aProced[13,2] := SUBS(&cNalias->cCole13Est,05,10)  // Nivel
+	       aProced[13,3] := SUBS(&cNalias->cCole13Est,15,40)  // Colegio
+	       aProced[13,4] := SUBS(&cNalias->cCole13Est,55,20)  // Ciudad
+
+	       aProced[14,1] := SUBS(&cNalias->cCole14Est,01,04)  // A¤o
+	       aProced[14,2] := SUBS(&cNalias->cCole14Est,05,10)  // Nivel
+	       aProced[14,3] := SUBS(&cNalias->cCole14Est,15,40)  // Colegio
+	       aProced[14,4] := SUBS(&cNalias->cCole14Est,55,20)  // Ciudad
+
+	       aProced[15,1] := SUBS(&cNalias->cCole15Est,01,04)  // A¤o
+	       aProced[15,2] := SUBS(&cNalias->cCole15Est,05,10)  // Nivel
+	       aProced[15,3] := SUBS(&cNalias->cCole15Est,15,40)  // Colegio
+	       aProced[15,4] := SUBS(&cNalias->cCole15Est,55,20)  // Ciudad
+
+	       aProced[16,1] := SUBS(&cNalias->cCole16Est,01,04)  // A¤o
+	       aProced[16,2] := SUBS(&cNalias->cCole16Est,05,10)  // Nivel
+	       aProced[16,3] := SUBS(&cNalias->cCole16Est,15,40)  // Colegio
+	       aProced[16,4] := SUBS(&cNalias->cCole16Est,55,20)  // Ciudad
+
+	       aProced[17,1] := SUBS(&cNalias->cCole00Est,01,04)  // A¤o
+	       aProced[17,2] := SUBS(&cNalias->cCole00Est,05,10)  // Nivel
+	       aProced[17,3] := SUBS(&cNalias->cCole00Est,15,40)  // Colegio
+	       aProced[17,4] := SUBS(&cNalias->cCole00Est,55,20)  // Ciudad
 
 	    ENDIF
 **********FIN INICIALIZACION DE LAS VARIABLES TEMPORALES
+
+**********ANALISIS DE DECISION
+	    nOpcion := nLeeOpcion('1<PREESCOLAR> 2<PRIMARIA> '+;
+				  '3<BACHILLERATO> 4<ABANDONAR>?',4,'0')
+	    IF nOpcion == 4
+	       EXIT
+	    ENDIF
+**********FIN ANALISIS DE DECISION
+
 
 **********IMPRESION DE LOS TITULOS DE ENCABEZADO
 	    aNroCol := {01,06,17,58}
@@ -2684,37 +2713,43 @@ FUNCTION lProceEst(lShared,nFilInf,nColInf,cCodEst,;
 	    @ nNroFil++,aNroCol[4] SAY 'CIUDAD'
 **********FIN IMPRESION DE LOS TITULOS DE ENCABEZADO
 
-/*
-
 **********LECTURA DEL PREESCOLAR
-	    @nNroFil,nNroCol+00   SAY 'PREESCOLAR:'
-	    FOR i := 1 TO 4
-		@ nNroFil+1,aNroCol[i] GET aProced[1,i] PICT "@!"
-	    ENDFOR
+	    IF nOpcion == 1
+	       nNroFil := nFilInf+6
+	       @nNroFil,nNroCol+00   SAY 'PREESCOLAR:'
+	       FOR i := 12 TO 17
+		   @ ++nNroFil,aNroCol[1] GET aProced[i,1] PICT "@!"
+		   @ nNroFil  ,aNroCol[2] GET aProced[i,2] PICT "@!"
+		   @ nNroFil  ,aNroCol[3] GET aProced[i,3] PICT "@!"
+		   @ nNroFil  ,aNroCol[4] GET aProced[i,4] PICT "@!"
+	       ENDFOR
+	    ENDIF
 **********FIN LECTURA DE LOS DATOS DEL CANDIDATO
 
-*/
-
 **********LECTURA DE LA PRIMARIA
-	    nNroFil := nFilInf+6
-	    @nNroFil,nNroCol+00 SAY 'PRIMARIA:'
-	    FOR i := 2 TO 7
-		@ ++nNroFil,aNroCol[1] GET aProced[i,1] PICT "@!"
-		@ nNroFil  ,aNroCol[2] GET aProced[i,2] PICT "@!"
-		@ nNroFil  ,aNroCol[3] GET aProced[i,3] PICT "@!"
-		@ nNroFil  ,aNroCol[4] GET aProced[i,4] PICT "@!"
-	    ENDFOR
+	    IF nOpcion == 2
+	       nNroFil := nFilInf+6
+	       @nNroFil,nNroCol+00 SAY 'PRIMARIA:'
+	       FOR i := 1 TO 5
+		   @ ++nNroFil,aNroCol[1] GET aProced[i,1] PICT "@!"
+		   @ nNroFil  ,aNroCol[2] GET aProced[i,2] PICT "@!"
+		   @ nNroFil  ,aNroCol[3] GET aProced[i,3] PICT "@!"
+		   @ nNroFil  ,aNroCol[4] GET aProced[i,4] PICT "@!"
+	       ENDFOR
+	    ENDIF
 **********FIN LECTURA DE LA PRIMARIA
 
 **********LECTURA DEL BACHILLERATO
-	    nNroFil += 1
-	    @nNroFil,nNroCol+00 SAY 'BACHILLERATO:'
-	    FOR i := 8 TO 13
-		@ ++nNroFil,aNroCol[1] GET aProced[i,1] PICT "@!"
-		@ nNroFil  ,aNroCol[2] GET aProced[i,2] PICT "@!"
-		@ nNroFil  ,aNroCol[3] GET aProced[i,3] PICT "@!"
-		@ nNroFil  ,aNroCol[4] GET aProced[i,4] PICT "@!"
-	    ENDFOR
+	    IF nOpcion == 3
+	       nNroFil := nFilInf+6
+	       @nNroFil,nNroCol+00 SAY 'BACHILLERATO:'
+	       FOR i := 6 TO 11
+		   @ ++nNroFil,aNroCol[1] GET aProced[i,1] PICT "@!"
+		   @ nNroFil  ,aNroCol[2] GET aProced[i,2] PICT "@!"
+		   @ nNroFil  ,aNroCol[3] GET aProced[i,3] PICT "@!"
+		   @ nNroFil  ,aNroCol[4] GET aProced[i,4] PICT "@!"
+	       ENDFOR
+	    ENDIF
 	    READ
 **********FIN LECTURA DEL BACHILLERATO
 
@@ -2741,50 +2776,60 @@ FUNCTION lProceEst(lShared,nFilInf,nColInf,cCodEst,;
 	       SELECT &cNalias
 	       IF lRegLock(lShared,.F.)
 
-		  REPL &cNalias->cCole13Est WITH aProced[1,1]+aProced[1,2]+;
+		  REPL &cNalias->cCole01Est WITH aProced[1,1]+aProced[1,2]+;
 						 aProced[1,3]+aProced[1,4]
-		*ÀPreescolar
 
-		  REPL &cNalias->cCole00Est WITH aProced[2,1]+aProced[2,2]+;
+		  REPL &cNalias->cCole02Est WITH aProced[2,1]+aProced[2,2]+;
 						 aProced[2,3]+aProced[2,4]
 
-		  REPL &cNalias->cCole01Est WITH aProced[3,1]+aProced[3,2]+;
+		  REPL &cNalias->cCole03Est WITH aProced[3,1]+aProced[3,2]+;
 						 aProced[3,3]+aProced[3,4]
 
-		  REPL &cNalias->cCole02Est WITH aProced[4,1]+aProced[4,2]+;
+		  REPL &cNalias->cCole04Est WITH aProced[4,1]+aProced[4,2]+;
 						 aProced[4,3]+aProced[4,4]
 
-		  REPL &cNalias->cCole03Est WITH aProced[5,1]+aProced[5,2]+;
+		  REPL &cNalias->cCole05Est WITH aProced[5,1]+aProced[5,2]+;
 						 aProced[5,3]+aProced[5,4]
-
-		  REPL &cNalias->cCole04Est WITH aProced[6,1]+aProced[6,2]+;
-						 aProced[6,3]+aProced[6,4]
-
-		  REPL &cNalias->cCole05Est WITH aProced[7,1]+aProced[7,2]+;
-						 aProced[7,3]+aProced[7,4]
 		*ÀPrimaria
 
-		  REPL &cNalias->cCole06Est WITH aProced[8,1]+aProced[8,2]+;
+		  REPL &cNalias->cCole06Est WITH aProced[6,1]+aProced[6,2]+;
+						 aProced[6,3]+aProced[6,4]
+
+		  REPL &cNalias->cCole07Est WITH aProced[7,1]+aProced[7,2]+;
+						 aProced[7,3]+aProced[7,4]
+
+		  REPL &cNalias->cCole08Est WITH aProced[8,1]+aProced[8,2]+;
 						 aProced[8,3]+aProced[8,4]
 
-		  REPL &cNalias->cCole07Est WITH aProced[9,1]+aProced[9,2]+;
+		  REPL &cNalias->cCole09Est WITH aProced[9,1]+aProced[9,2]+;
 						 aProced[9,3]+aProced[9,4]
 
-		  REPL &cNalias->cCole08Est WITH aProced[10,1]+aProced[10,2]+;
+		  REPL &cNalias->cCole10Est WITH aProced[10,1]+aProced[10,2]+;
 						 aProced[10,3]+aProced[10,4]
 
-		  REPL &cNalias->cCole09Est WITH aProced[11,1]+aProced[11,2]+;
+		  REPL &cNalias->cCole11Est WITH aProced[11,1]+aProced[11,2]+;
 						 aProced[11,3]+aProced[11,4]
-
-		  REPL &cNalias->cCole10Est WITH aProced[12,1]+aProced[12,2]+;
-						 aProced[12,3]+aProced[12,4]
-
-		  REPL &cNalias->cCole11Est WITH aProced[13,1]+aProced[13,2]+;
-						 aProced[13,3]+aProced[13,4]
 		*ÀBachillerato
 
-		  REPL &cNalias->cCole12Est WITH aProced[14,1]+aProced[14,2]+;
+		  REPL &cNalias->cCole12Est WITH aProced[12,1]+aProced[12,2]+;
+						 aProced[12,3]+aProced[12,4]
+
+		  REPL &cNalias->cCole13Est WITH aProced[13,1]+aProced[13,2]+;
+						 aProced[13,3]+aProced[13,4]
+
+		  REPL &cNalias->cCole14Est WITH aProced[14,1]+aProced[14,2]+;
 						 aProced[14,3]+aProced[14,4]
+
+		  REPL &cNalias->cCole15Est WITH aProced[15,1]+aProced[15,2]+;
+						 aProced[15,3]+aProced[15,4]
+
+		  REPL &cNalias->cCole16Est WITH aProced[16,1]+aProced[16,2]+;
+						 aProced[16,3]+aProced[16,4]
+
+		  REPL &cNalias->cCole00Est WITH aProced[17,1]+aProced[17,2]+;
+						 aProced[17,3]+aProced[17,4]
+		*ÀPreescolar
+
 	       ELSE
 		   cError('NO SE GRABA EL REGISTRO')
 	       ENDIF

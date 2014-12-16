@@ -261,8 +261,8 @@ FUNCTION Matr_6352(aParam1,aParam2,aParam3)
       IF MTR->lPrnArcMtr
 	 SET DEVICE TO PRINT
       ELSE
-	 FilePrn := 'mtr601'
-	 nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,'2',.F.,.F.,bInsIso)
+	 FilePrn := 'HojaMatr'
+	 nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,MTR->cOpcPrnMtr,.F.,.F.,bInsIso,PathDoc)
 	 IF EMPTY(nOpcPrn)
 	    CloseAll()
 	    RETURN NIL

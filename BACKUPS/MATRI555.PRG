@@ -36,8 +36,8 @@ FUNCTION Matri_555(aParam1,aParam2,aParam3)
 *>>>>FIN DESCRIPCION DE PARAMETROS
 
 *>>>>DECLARACION DE VARIABLES
-       #INCLUDE "EPSONFX.PRG"  // Impresora EPSON FX
-       #INCLUDE "CAMPOS\ARC-MATRR.PRG"      // Archivos del Sistema
+       #INCLUDE "EPSONFX.PRG"              // Impresora EPSON FX
+       #INCLUDE "CAMPOS\ARC-MATR.PRG"      // Archivos del Sistema
 
        LOCAL cSavPan := ''                  // Salvar Pantalla
        LOCAL lHayErr := .F.                 // .T. Hay Error
@@ -517,25 +517,25 @@ FUNCTION Matri_555(aParam1,aParam2,aParam3)
        bDerAut := {||DerechosPrn(cNomSis,cNomEmp,nLenPrn)}
 *>>>>FIN ANALISIS PARA CENTRAR EL INFORME
 
-*>>>>SELECION DEL TIPO DE IMPRESION
-       NNETSETQ('COLA')
-       NNETCAPBEG(1)
-       IF !lPregunta('DESEA IMPRIMIR EN RED? No Si')
-	  NNETCAPEND(1)
-       ENDIF
-*>>>>FIN SELECION DEL TIPO DE IMPRESION
-
 *>>>>ACTIVACION DE LA IMPRESORA
-       IF !Printer_on(MTR->lPrnArcMtr)
-	   RETURN NIL
+       IF MTR->lPrnArcMtr
+	  SET DEVICE TO PRINT
+       ELSE
+	  FilePrn = SUBS(MTR->cSerFacMtr,1,1)+'pgr'+cAnoUsr
+	  nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,MTR->cOpcPrnMtr,.T.,.T.,,PathDoc)
+	  IF EMPTY(nOpcPrn)
+	     RETURN NIL
+	  ENDIF
        ENDIF
+
        @ PROW(),00 SAY INICIALIZA
        EVAL(bCabeza)
       *Impresi¢n del Encabezado
-       SET DEVICE TO SCREEN
 *>>>>FIN ACTIVACION DE LA IMPRESORA
 
+
 *>>>>IMPRESION POR NIVELES
+       SET DEVICE TO SCREEN
        SELECT NIV
        GO nRegFin
        cNivFin = NIV->cCodigoNiv
@@ -756,6 +756,8 @@ FUNCTION Matri_555(aParam1,aParam2,aParam3)
        DerechosPrn(cNomSis,cNomEmp,n17Stan)
        @ PROW()-PROW(),00 SAY ' '
       *Saca la ultima linea
+
+       VerPrn(nOpcPrn,FilePrn)
 
        CLOSE ALL
        SET DEVICE TO SCREEN

@@ -46,6 +46,8 @@ FUNCTION CreaDbfPag(lShared,PathPag,FilePag,aStrDbf)
        aStrDbf                              // @Estructura de las bases */
 *>>>>FIN PARAMETROS DE LA FUNCION
 
+
+
 *>>>>DECLARACION DE VARIABLES
        LOCAL PathAct := ''                  // Path Actual
        LOCAL GetList := {}                  // Variable del sistema
@@ -72,6 +74,9 @@ FUNCTION CreaDbfPag(lShared,PathPag,FilePag,aStrDbf)
 			 {"nVlrCo6Pag","Numeric"  ,10,2},; // Valor del Concepto No. 6
 			 {"nVlrCo7Pag","Numeric"  ,10,2},; // Valor del Concepto No. 7
 			 {"nVlrCo8Pag","Numeric"  ,10,2},; // Valor del Concepto No. 8
+			 {"nVlrDesPag","Numeric"  ,10,2},; // Valor descuento individual
+			 {"nPagParPag","Numeric"  ,10,2},; // Valor del pago parcial.
+			 {"nVlrRecPag","Numeric"  ,10,2},; // Valor recargo individual
 			 {"dFecFacPag","Date"     ,08,0},; // Fecha de Facturaci¢n
 			 {"dPagOpoPag","Date"     ,08,0},; // Fecha pago oportuno
 			 {"dPagExtPag","Date"     ,08,0},; // Fecha pago extemporaneo
@@ -665,6 +670,26 @@ FUNCTION oDefBrwPag(lShared,nFilSup,nColSup,nFilInf,nColInf,cMaeAct)
      *ÀDefinici¢n Columna
 
        oColumn	     := TBCOLUMNNEW('CODIGO', {||PAG->cCodigoEst})
+       oColumn:Cargo := {{'MODI',.F.}}
+       oBrowse:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+
+       oColumn	     := TBCOLUMNNEW('VALOR PAGOS;PARCIALES',;
+				   {||PAG->nPagParPag})
+       oColumn:Cargo := {{'MODI',.F.}}
+       oBrowse:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+
+       oColumn	     := TBCOLUMNNEW('VALOR DE LOS;DESCUENTOS',;
+				   {||PAG->nVlrDesPag})
+       oColumn:Cargo := {{'MODI',.F.}}
+       oBrowse:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
+
+       oColumn	     := TBCOLUMNNEW('VALOR DE LOS;RECARGOS',;
+				   {||PAG->nVlrRecPag})
        oColumn:Cargo := {{'MODI',.F.}}
        oBrowse:ADDCOLUMN(oColumn)
      *ÀDefinici¢n Columna

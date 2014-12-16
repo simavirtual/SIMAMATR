@@ -158,6 +158,10 @@ OBJETIVOS:
 
        LOCAL FileSib := 'SISBEN'+ExtFile
      *ÀArchivo de Sisben
+
+       LOCAL FileDes := 'DESCUENT'+ExtFile
+       LOCAL fNtxDes := 'DESCUENT'+cExtNtx
+     *ÀArchivo de Descuentos
 *>>>>FIN DECLARACION DE ARCHIVOS DEL SISTEMA
 
 *>>>>DECLARACION DE ARCHIVOS COMPARTIDOS

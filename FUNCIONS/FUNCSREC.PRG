@@ -1214,9 +1214,9 @@ FUNCTION nRecMtr05(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
 		   cJorTxt,nNroFac,cCodEst,cNomEst,cCodGru,cNomBan,;
 		   cCtaBan,cLugBan,cConcep,nIntMor,dPagOpo,dPagExt,;
 		   lPagExt,cMensaj,nVlrMes,aVlrCon,nMesIni,nMesFin,;
-		   lPrnGru,nRecNro)
+		   lPrnGru,nRecNro,nDescue,nPagPar,nRecarg)
 
-*>>>>PARAMETROS DE LA FUNCION
+*>>>>DESCRIPCION DE PARAMETROS
 /*     lShared                              // .T. Archivos Compartidos
        cEmpPal                              // Nombre de la Empresa principal
        cNitEmp                              // Nit de la Empresa
@@ -1242,8 +1242,11 @@ FUNCTION nRecMtr05(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
        nMesIni                              // Mes inicial del pago
        nMesFin                              // Mes Final del pago
        lPrnGru                              // .T. Impresi¢n por grupos
-       nRecNro                              // N£mero del Recibo */
-*>>>>FIN PARAMETROS DE LA FUNCION
+       nRecNro                              // N£mero del Recibo
+       nDescue                              // @Valor del Descuento
+       nPagPar                              // @Pago Parcial
+       nRecarg                              // @Valor del Recargo */
+*>>>>FIN DESCRIPCION DE PARAMETROS
 
 *>>>>DECLARACION DE VARIABLES
        LOCAL cMsgTxt := ''                  // Texto variable
@@ -1270,6 +1273,9 @@ FUNCTION nRecMtr05(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
        LOCAL nVlrTot := 0                   // Valor Total del recibo
        LOCAL nVlrInt := 0                   // Valor de los intereses
        LOCAL nVlrPag := 0                   // Valor del mes a pagar
+       LOCAL lHayDes := .F.                 // .T. Hay Descuentos
+       LOCAL nVlrDes := 0                   // Valor del Descuento
+       LOCAL nTipDes := 0                   // Tipo de descuento
        SET FIXED OFF
 *>>>>FIN DECLARACION DE VARIABLES
 
@@ -1502,8 +1508,74 @@ FUNCTION nRecMtr05(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
        ENDIF
 *>>>>FIN IMPRESION DEL ENCABEZADO
 
+*>>>>ANALISIS SI EL ESTUDIANTE TIENE DESCUENTOS
+       nDescue := 0
+       nPagPar := 0
+       nRecarg := 0
+
+       lHayDes := lSekCodDes(cCodEst,nMesIni,.F.)
+
+       IF lHayDes
+
+	  nVlrDes := DES->nValorDes
+	  nTipDes := DES->nTipDesDes
+
+	  DO CASE
+	  CASE nTipDes == 1 .OR. nTipDes == 4    // Descuento o Pago Parcial
+
+	       IF nTipDes == 1
+		  nDescue := DES->nValorDes
+	       ELSE
+		  nPagPar := DES->nValorDes
+	       ENDIF
+	       nRecarg := 0
+
+
+	  CASE nTipDes == 2    // Recargo
+
+	       nDescue := 0
+	       nRecarg := DES->nValorDes
+
+	  ENDCASE
+       ENDIF
+*>>>>FIN ANALISIS SI EL ESTUDIANTE TIENE DESCUENTOS
+
+*>>>>IMPRESION DEL DESCUENTO O DEL RECARGO
+       IF lHayDes
+
+	  DO CASE
+	  CASE nTipDes == 1 .OR. nTipDes == 4
+
+	       IF nTipDes == 1
+		  cMsgTxt := 'DESCUENTO'
+		  IF ANO->lNomConDes
+		     cMsgTxt := DES->cNombreCon
+		  ENDIF
+	       ELSE
+		  cMsgTxt := 'P PARCIAL'
+	       ENDIF
+
+	  CASE nTipDes == 2
+
+	       cMsgTxt := 'RECARGO  '
+	       IF ANO->lNomConDes
+		  cMsgTxt := DES->cNombreCon
+	       ENDIF
+
+	  ENDCASE
+
+	  Post('MZP 0.3,6.0; TEXT "'+cMsgTxt+'";')
+	  Post('MZP 0.3,15.0;TEXT "'+cMsgTxt+'";')
+
+	  Post('MZP 13.5,6.0; TEXT "'+TRANS(nVlrDes,'9,999,999')+'";')
+	  Post('MZP 13.5,15.0;TEXT "'+TRANS(nVlrDes,'9,999,999')+'";')
+
+       ENDIF
+*>>>>FIN IMPRESION DEL DESCUENTO O DEL RECARGO
+
 *>>>>IMPRESION DEL VALOR DE LOS CONCEPTOS
-       nVlrMes := nVlrCon05(@aVlrCon,nMesIni,nMesFin,cCodGru,cConcep,nNroLen)
+       nVlrMes := nVlrCon05(@aVlrCon,nMesIni,nMesFin,;
+			    cCodGru,cConcep,nNroLen,lHayDes)
       *Impresi¢n de conceptos
 
        IF VALTYPE(nVlrMes) == 'C'
@@ -1516,6 +1588,19 @@ FUNCTION nRecMtr05(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
 	  nVlrTot := nVlrMes * (nMesFin - nMesIni + 1)
        ENDIF
 *>>>>FIN IMPRESION DEL VALOR DE LOS CONCEPTOS
+
+*>>>>REALIZACION DEL DESCUENTO O RECARGO
+       IF lHayDes
+	  DO CASE
+	  CASE nTipDes == 1 .OR. nTipDes == 4
+	     nVlrTot := ROUND(nVlrTot - nVlrDes,0)
+	     nVlrMes := ROUND(nVlrMes - nVlrDes,0)
+	  CASE nTipDes == 2
+	     nVlrTot := ROUND(nVlrTot + nVlrDes,0)
+	     nVlrMes := ROUND(nVlrMes + nVlrDes,0)
+	  ENDCASE
+       ENDIF
+*>>>>FIN REALIZACION DEL DESCUENTO O RECARGO
 
 *>>>>IMPRESION DEL TOTAL A PAGAR EN FECHA OPORTUNA
        IF nRecNro == 5
@@ -1705,16 +1790,17 @@ SINTAXIS:
 *                              PROGRAMA                                  *
 *------------------------------------------------------------------------*/
 
-FUNCTION nVlrCon05(aVlrCon,nMesIni,nMesFin,cCodGru,cConcep,nNroLen)
+FUNCTION nVlrCon05(aVlrCon,nMesIni,nMesFin,cCodGru,cConcep,nNroLen,lHayDes)
 
-*>>>>PARAMATROS DE LA FUNCION
+*>>>>DESCRIPCION DE PARAMETROS
 /*     aVlrCon                              // Valor de los Conceptos
        nMesIni                              // Mes inicial de pago
        nMesFin                              // Mes final de pago
        cCodGru                              // C¢digo del grupo
        cConcep                              // Conceptos por cobrar
-       nNroLen                              // Longitud del Recibo */
-*>>>>FIN PARAMATROS DE LA FUNCION
+       nNroLen                              // Longitud del Recibo
+       lHayDes                              // .T. Hay Descuento */
+*>>>>FIN DESCRIPCION DE PARAMETROS
 
 *>>>>DECLARACION DE VARIABLES
        LOCAL       i := 0                   // Contador
@@ -1740,7 +1826,7 @@ FUNCTION nVlrCon05(aVlrCon,nMesIni,nMesFin,cCodGru,cConcep,nNroLen)
 *>>>>FIN LINEAS DE ESPACIADO PARA LA FORMA PREIMPRESA
 
 *>>>>CALCULO DE LOS CONCEPTOS
-       nNroCon := (LEN(cConcep)/2)+3
+       nNroCon := (LEN(cConcep)/2)+IF(lHayDes,2,3)
 *>>>>FIN CALCULO DE LOS CONCEPTOS
 
 *>>>>IMPRESION DE LOS CONCEPTOS
@@ -1838,9 +1924,9 @@ FUNCTION nRecMtr07(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
 		   cJorTxt,cCodIso,nNroFac,cCodEst,cNomEst,cCodGru,;
 		   cNomBan,cCtaBan,cLugBan,cConcep,nIntMor,dPagOpo,;
 		   dPagExt,lPagExt,cMensaj,nVlrMes,aVlrCon,nMesIni,;
-		   nMesFin,lPrnGru,nRecNro)
+		   nMesFin,lPrnGru,nRecNro,nDescue,nPagPar,nRecarg)
 
-*>>>>PARAMETROS DE LA FUNCION
+*>>>>DESCRIPCION DE PARAMETROS
 /*     lShared                              // .T. Archivos Compartidos
        cEmpPal                              // Nombre de la Empresa principal
        cNitEmp                              // Nit de la Empresa
@@ -1867,8 +1953,11 @@ FUNCTION nRecMtr07(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
        nMesIni                              // Mes inicial del pago
        nMesFin                              // Mes Final del pago
        lPrnGru                              // .T. Impresi¢n por grupos
-       nRecNro                              // N£mero del Recibo */
-*>>>>FIN PARAMETROS DE LA FUNCION
+       nRecNro                              // N£mero del Recibo
+       nDescue                              // @Valor del Descuento
+       nPagPar                              // @Pago Parcial
+       nRecarg                              // @Valor del Recargo */
+*>>>>FIN DESCRIPCION DE PARAMETROS
 
 *>>>>DECLARACION DE VARIABLES
        LOCAL cMsgTxt := ''                  // Texto variable
@@ -1901,9 +1990,12 @@ FUNCTION nRecMtr07(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
        LOCAL nVlrTot := 0                   // Valor Total del recibo
        LOCAL nVlrInt := 0                   // Valor de los intereses
        LOCAL nVlrPag := 0                   // Valor del mes a pagar
+
+       LOCAL lHayDes := .F.                 // .T. Hay Descuentos
+       LOCAL nVlrDes := 0                   // Valor del Descuento
+       LOCAL nTipDes := 0                   // Tipo de descuento
        SET FIXED OFF
 *>>>>FIN DECLARACION DE VARIABLES
-
 
 *>>>>VALIDACION DEL LIMITE DE LA FACTURACION
        SETPRC(0,0)
@@ -2201,8 +2293,95 @@ FUNCTION nRecMtr07(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
        ENDIF
 *>>>>FIN IMPRESION DEL ENCABEZADO
 
+*>>>>ANALISIS SI EL ESTUDIANTE TIENE DESCUENTOS
+       nDescue := 0
+       nPagPar := 0
+       nRecarg := 0
+
+       lHayDes := lSekCodDes(cCodEst,nMesIni,.F.)
+
+       IF lHayDes
+
+	  nVlrDes := DES->nValorDes
+	  nTipDes := DES->nTipDesDes
+
+	  DO CASE
+	  CASE nTipDes == 1 .OR. nTipDes == 4    // Descuento o Pago Parcial
+
+	       IF nTipDes == 1
+		  nDescue := DES->nValorDes
+	       ELSE
+		  nPagPar := DES->nValorDes
+	       ENDIF
+	       nRecarg := 0
+
+
+	  CASE nTipDes == 2    // Recargo
+
+	       nDescue := 0
+	       nRecarg := DES->nValorDes
+
+	  ENDCASE
+       ENDIF
+*>>>>FIN ANALISIS SI EL ESTUDIANTE TIENE DESCUENTOS
+
+*>>>>IMPRESION DEL DESCUENTO O DEL RECARGO
+       IF lHayDes
+
+	  DO CASE
+	  CASE nTipDes == 1 .OR. nTipDes == 4
+
+	       IF nTipDes == 1
+		  cMsgTxt := 'DESCUENTO'
+		  IF ANO->lNomConDes
+		     cMsgTxt := DES->cNombreCon
+		  ENDIF
+	       ELSE
+		  cMsgTxt := 'P PARCIAL'
+	       ENDIF
+
+	  CASE nTipDes == 2
+
+	       cMsgTxt := 'RECARGO  '
+	       IF ANO->lNomConDes
+		  cMsgTxt := DES->cNombreCon
+	       ENDIF
+
+	  ENDCASE
+
+	  IF nRecNro == 7  // Formato Impreso
+
+	     cCodMzp := '0.3,5.9;'+;
+			'0.3,14.9;'
+
+	     LineaMzp(cCodMzp,cMsgTxt,nTotPrn-1)
+	   *ÀDescripcion Descuento,Recargo,Pago Parcial
+
+	     cCodMzp := '13.5,5.9;'+;
+			'13.5,14.9;'
+	     LineaMzp(cCodMzp,TRANS(nVlrDes,'9,999,999'),nTotPrn-1)
+	   *ÀValor del Descuento,Recargo,Pago Parcial
+
+	  ELSE
+
+	     cCodMzp := '0.3,6.3;'+;
+			'0.3,14.9;'
+	     LineaMzp(cCodMzp,cMsgTxt,nTotPrn-1)
+	   *ÀDescripcion Descuento,Recargo,Pago Parcial
+
+	     cCodMzp := '13.5,6.3;'+;
+			'13.5,14.9;'
+	     LineaMzp(cCodMzp,TRANS(nVlrDes,'9,999,999'),nTotPrn-1)
+	   *ÀValor del Descuento,Recargo,Pago Parcial
+
+	  ENDIF
+
+       ENDIF
+*>>>>FIN IMPRESION DEL DESCUENTO O DEL RECARGO
+
 *>>>>IMPRESION DEL VALOR DE LOS CONCEPTOS
-       nVlrMes := nVlrCon07(@aVlrCon,nMesIni,nMesFin,cCodGru,cConcep,nNroLen)
+       nVlrMes := nVlrCon07(@aVlrCon,nMesIni,nMesFin,cCodGru,cConcep,;
+			    nNroLen,nRecNro)
       *Impresi¢n de conceptos
 
        IF VALTYPE(nVlrMes) == 'C'
@@ -2216,17 +2395,30 @@ FUNCTION nRecMtr07(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
        ENDIF
 *>>>>FIN IMPRESION DEL VALOR DE LOS CONCEPTOS
 
+*>>>>REALIZACION DEL DESCUENTO O RECARGO
+       IF lHayDes
+	  DO CASE
+	  CASE nTipDes == 1 .OR. nTipDes == 4
+	     nVlrTot := ROUND(nVlrTot - nVlrDes,0)
+	     nVlrMes := ROUND(nVlrMes - nVlrDes,0)
+	  CASE nTipDes == 2
+	     nVlrTot := ROUND(nVlrTot + nVlrDes,0)
+	     nVlrMes := ROUND(nVlrMes + nVlrDes,0)
+	  ENDCASE
+       ENDIF
+*>>>>FIN REALIZACION DEL DESCUENTO O RECARGO
+
 *>>>>IMPRESION DEL TOTAL A PAGAR EN FECHA OPORTUNA
        IF nRecNro == 7
-	  Post('MZP 0.3,9.3; TEXT "FECHA LIMITE OPORTUNA"; MZP 6.5,9.3; TEXT "'+cFecha(dPagOpo)+'";')
-	  Post('MZP 0.3,18.3; TEXT "FECHA LIMITE OPORTUNA"; MZP 6.5,18.3; TEXT "'+cFecha(dPagOpo)+'";')
+	  Post('MZP 0.3,9.3; TEXT "FECHA LIMITE OPORTUNA"; MZP 6.7,9.3; TEXT "'+cFecha(dPagOpo)+'";')
+	  Post('MZP 0.3,18.3; TEXT "FECHA LIMITE OPORTUNA"; MZP 6.7,18.3; TEXT "'+cFecha(dPagOpo)+'";')
 
 	  Post('MZP 13.0,9.3; TEXT "PAGUE $"; MZP 18.5,9.3; TEXT "'+TRANSFORM(nVlrTot,"***,***,***")+'";')
 	  Post('MZP 13.0,18.3;TEXT "PAGUE $"; MZP 18.5,18.3; TEXT "'+TRANSFORM(nVlrTot,"***,***,***")+'";')
        ELSE
 
-	  cCodMzp := '6.5,9.5;'+;
-		     '6.5,18.1;'+;
+	  cCodMzp := '6.7,9.5;'+;
+		     '6.7,18.1;'+;
 		     '10.5,22.1;'
 	  LineaMzp(cCodMzp,cFecha(dPagOpo),nTotPrn)
 	*ÀFecha pago oportuno
@@ -2258,15 +2450,15 @@ FUNCTION nRecMtr07(lShared,cEmpPal,cNitEmp,cNomEmp,cNomUsr,cAnoUsr,;
 
 *>>>>IMPRESION DEL TOTAL A PAGAR EN FECHA EXTEMPORANEA
        IF nRecNro == 7
-	  Post('MZP 0.3,9.7; TEXT "FECHA LIMITE EXTEMPORANEA"; MZP 6.5,9.7; TEXT "'+cFecha(dPagExt)+'";')
-	  Post('MZP 0.3,18.7;TEXT "FECHA LIMITE EXTEMPORANEA"; MZP 6.5,18.7; TEXT "'+cFecha(dPagExt)+'";')
+	  Post('MZP 0.3,9.7; TEXT "FECHA LIMITE EXTEMPORANEA"; MZP 6.7,9.7; TEXT "'+cFecha(dPagExt)+'";')
+	  Post('MZP 0.3,18.7;TEXT "FECHA LIMITE EXTEMPORANEA"; MZP 6.7,18.7; TEXT "'+cFecha(dPagExt)+'";')
 
 	  Post('MZP 13.0,9.7; TEXT "PAGUE $"; MZP 18.5,9.7; TEXT "'+TRANSFORM(nVlrTot+nVlrInt,"***,***,***")+'";')
 	  Post('MZP 13.0,18.7;TEXT "PAGUE $"; MZP 18.5,18.7; TEXT "'+TRANSFORM(nVlrTot+nVlrInt,"***,***,***")+'";')
        ELSE
 
-	  cCodMzp := '6.5,9.9;'+;
-		     '6.5,18.7;'+;
+	  cCodMzp := '6.7,9.9;'+;
+		     '6.7,18.7;'+;
 		     '10.5,24.5;'
 	  LineaMzp(cCodMzp,cFecha(dPagExt),nTotPrn)
 	*ÀFecha Pago Extemporaneo
@@ -2438,7 +2630,7 @@ SINTAXIS:
 *                              PROGRAMA                                  *
 *------------------------------------------------------------------------*/
 
-FUNCTION nVlrCon07(aVlrCon,nMesIni,nMesFin,cCodGru,cConcep,nNroLen)
+FUNCTION nVlrCon07(aVlrCon,nMesIni,nMesFin,cCodGru,cConcep,nNroLen,nNroRec)
 
 *>>>>PARAMATROS DE LA FUNCION
 /*     aVlrCon                              // Valor de los Conceptos
@@ -2446,7 +2638,8 @@ FUNCTION nVlrCon07(aVlrCon,nMesIni,nMesFin,cCodGru,cConcep,nNroLen)
        nMesFin                              // Mes final de pago
        cCodGru                              // C¢digo del grupo
        cConcep                              // Conceptos por cobrar
-       nNroLen                              // Longitud del Recibo */
+       nNroLen                              // Longitud del Recibo
+       nNroRec                              // N£mero del Recibo */
 *>>>>FIN PARAMATROS DE LA FUNCION
 
 *>>>>DECLARACION DE VARIABLES
@@ -2505,8 +2698,18 @@ FUNCTION nVlrCon07(aVlrCon,nMesIni,nMesFin,cCodGru,cConcep,nNroLen)
 **********FIN LECTURA DEL VALOR Y DESCRIPCION DEL CONCEPTO
 
 **********ACUMULACION DE LOS VALORES DE LOS CONCEPTOS
-	    cFilas1 := '6.7;7.1;7.5;7.9;8.3;8.7;9.1;'
-	    cFilas2 := '15.3;15.7;16.1;16.5;16.9;17.3;17.7;'
+	    IF nNroRec == 7 // Formato Impreso
+
+	       cFilas1 := '6.4;7.0;7.2;7.6;8.0;8.4;8.8;'
+	       cFilas2 := '15.3;15.7;16.1;16.5;16.9;17.3;17.7;'
+
+	    ELSE
+
+	       cFilas1 := '6.6;6.8;7.2;7.6;8.0;8.4;8.8;'
+	       cFilas2 := '15.3;15.7;16.1;16.5;16.9;17.3;17.7;'
+
+	    ENDIF
+
 	    cFilUno := SUBS(cFilas1,i*4-3,4)
 	    cFilDos := SUBS(cFilas2,i*5-4,5)
 

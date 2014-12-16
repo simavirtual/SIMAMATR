@@ -296,8 +296,10 @@ FUNCTION Matri_401(aParam1,aParam2,aParam3)
 	    ELSE
 	       DO CASE
 	       CASE &cNalias->lRetiroEst
+/*
 		    cError(cNombreTes+' ESTA RETIRADO')
 		    LOOP
+*/
 	       ENDCASE
 	    ENDIF
 

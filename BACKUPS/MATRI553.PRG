@@ -202,6 +202,20 @@ FUNCTION Matri_553(aParam1,aParam2,aParam3)
        GO TOP
 *>>>>FIN FILTRACION DE LOS PAGOS
 
+*>>>>ACTIVACION DE LA IMPRESORA
+       IF MTR->lPrnArcMtr
+	  SET DEVICE TO PRINT
+       ELSE
+	  FilePrn = SUBS(MTR->cSerFacMtr,1,1)+'pago'+cMaeAct
+	  nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,MTR->cOpcPrnMtr,.T.,.T.,,PathDoc)
+	  IF EMPTY(nOpcPrn)
+	     CloseAll()
+	     RETURN NIL
+	  ENDIF
+       ENDIF
+       SET DEVICE TO SCREEN
+*>>>>FIN ACTIVACION DE LA IMPRESORA
+
 *>>>>INDEXACION DEL ARCHIVO
        cSavPan := SAVESCREEN(0,0,24,79)
        Termometro(0,'ORDENANDO POR APELLIDO')
@@ -243,6 +257,9 @@ FUNCTION Matri_553(aParam1,aParam2,aParam3)
 	   *Relaci¢n de pagos por niveles
 
        ENDCASE
+
+       VerPrn(nOpcPrn,FilePrn)
+
        CloseAll()
        lFileDelete(fNtxTem)
        RETURN NIL
@@ -292,6 +309,8 @@ FUNCTION PagosAlu(cNomEmp,cNomSis,cAnoUsr,cMatric,cJorTxt,;
 
 *>>>>DECLARACION DE VARIABLES
        #INCLUDE "EPSONFX.PRG"               // Impresora EPSON FX
+
+       #INCLUDE "CAMPOS\ARC-MATRR.PRG"      // Archivos del Sistema
 
        LOCAL cSavPan := ''                  // Salvar Pantalla
        LOCAL cAnoSis := SUBS(cAnoUsr,3,2)   // A¤o del sistema
@@ -404,10 +423,8 @@ FUNCTION PagosAlu(cNomEmp,cNomSis,cAnoUsr,cMatric,cJorTxt,;
 *>>>>FIN IMPRESION DEL TERMOMETRO
 
 *>>>>ACTIVACION DE LA IMPRESORA
-       IF !Printer_on(MTR->lPrnArcMtr)
-	   RETURN NIL
-       ENDIF
-       @ PROW(),00 SAY INICIALIZA
+       SET DEVICE TO PRINT
+       SendCodes(PCL('Reset'))
        EVAL(bCabeza)
       *Impresi¢n del Encabezado
 *>>>>FIN ACTIVACION DE LA IMPRESORA
@@ -610,6 +627,7 @@ FUNCTION PagosAlu(cNomEmp,cNomSis,cAnoUsr,cMatric,cJorTxt,;
        DerechosPrn(cNomSis,cNomEmp,nLenPrn)
        @ PROW()-PROW(),00 SAY ' '
       *Saca la ultima linea
+
        SET DEVICE TO SCREEN
        RESTSCREEN(0,0,24,79,cSavPan)
        RETURN NIL

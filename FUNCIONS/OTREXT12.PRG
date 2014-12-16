@@ -239,9 +239,9 @@ FUNCTION FOtrExt12(aP1,aP2,aP3,;
        IF xPrm(aP3,'lPrnArc')
 	  SET DEVICE TO PRINT
        ELSE
-	  FilePrn := 'mvc'
-	  nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,xPrm(aP3,'cOpcPrn'),.F.,.T.)
-          IF EMPTY(nOpcPrn)
+	  FilePrn := SUBS(MTR->cSerFacMtr,1,1)+'mvc'+cNroMes+BAN->cCodigoBan
+	  nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,xPrm(aP3,'cOpcPrn'),.F.,.T.,,PathDoc)
+	  IF EMPTY(nOpcPrn)
              RETURN NIL
           ENDIF
        ENDIF

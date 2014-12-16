@@ -86,6 +86,9 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
        LOCAL aVlrCon := ''                  // Valor de los Conceptos
        LOCAL lPrnGru := .T.                 // Impresi¢n por grupos
        LOCAL aColMzp := {}                  // Columnas y filas
+       LOCAL nDescue := 0                   // Valor del Descuento
+       LOCAL nPagPar := 0                   // Valor Pago Parcial
+       LOCAL nRecarg := 0                   // Valor del Recargo
        LOCAL Getlist := {}                  // Variable del sistema
      *ÀVariables espec¡ficas
 
@@ -194,6 +197,9 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
        AADD(aUseDbf,{.T.,cPatSis+'\'+FileCon,'CON',NIL,lShared,nModCry})
        AADD(aUseDbf,{.T.,cPatSis+'\'+FileTar,'TAR',NIL,lShared,nModCry})
 
+       AADD(aUseDbf,{.T.,cPatSis+'\'+FileDes,'DES',;
+			 cPatSis+'\'+fNtxDes,lShared,nModCry})
+
        AADD(aUseDbf,{.T.,cPatSis+'\'+FilePag,'PAG',;
 			 cPatSis+'\'+fNtxPag,lShared,nModCry})
 
@@ -267,6 +273,15 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
 	  RETURN NIL
        ENDIF
 *>>>>FIN VALIDACION DE CONTENIDOS DE ARCHIVOS
+
+*>>>>VERIFICACION DE INSCRIPCIONES ABIERTAS
+       IF !ANO->lHayInsAno
+	  cError('Estan Cerradas las Inscripciones para '+cAnoUsr,;
+		 '!Atenci¢n!')
+	  CloseAll(aUseDbf)
+	  RETURN NIL
+       ENDIF
+*>>>>FIN VERIFICACION DE INSCRIPCIONES ABIERTAS
 
 *>>>>LOCALIZACION DE LA IMPRESORA
        IF !lLocCodigo('nCodigoPrn','PRN',MTR->nCodigoPrn)
@@ -627,7 +642,8 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
 					 @nVlrMesTpa,;
 					 @aVlrCon,;
 					 13,VAL(TRC->cCodigoTrc),;
-					 lPrnGru,ANO->nRecNroAno)
+					 lPrnGru,ANO->nRecNroAno,;
+					 @nDescue,@nPagPar,@nRecarg)
 			 *Recibo c¢digo de Barras la Kiosera
 
 	       CASE ANO->nRecNroAno == 7 .OR. ANO->nRecNroAno == 8
@@ -651,7 +667,8 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
 					 @nVlrMesTpa,;
 					 @aVlrCon,;
 					 13,VAL(TRC->cCodigoTrc),;
-					 lPrnGru,ANO->nRecNroAno)
+					 lPrnGru,ANO->nRecNroAno,;
+					 @nDescue,@nPagPar,@nRecarg)
 			 *Recibo c¢digo de Barras la Kiosera. La Salle
 
 	       CASE ANO->nRecNroAno == 9
@@ -751,6 +768,9 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
 		      REPL &('PAG->nVlrCo'+STR(i,1)+'Pag');
 			   WITH aVlrCon[i]
 		  ENDFOR
+		  REPL PAG->nVlrDesPag WITH nDescue
+		  REPL PAG->nPagParPag WITH nPagPar
+		  REPL PAG->nVlrRecPag WITH nRecarg
 		  REPL PAG->dFecFacPag WITH DATE()
 		  REPL PAG->dPagopoPag WITH ANO->dOpoMatAno
 		  REPL PAG->dPagextPag WITH ANO->dExtMatAno
@@ -844,7 +864,8 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
 					 @nVlrMesTpa,;
 					 @aVlrCon,;
 					 nMesIni,nMesFin,;
-					 lPrnGru)
+					 lPrnGru,NIL,;
+					 @nDescue,@nPagPar,@nRecarg)
 			 *Recibo c¢digo de Barras la Kiosera
 	       ENDCASE
 
@@ -893,6 +914,9 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
 		      REPL &('PAG->nVlrCo'+STR(i,1)+'Pag');
 			   WITH aVlrCon[i]
 		  ENDFOR
+		  REPL PAG->nVlrDesPag WITH nDescue
+		  REPL PAG->nPagParPag WITH nPagPar
+		  REPL PAG->nVlrRecPag WITH nRecarg
 		  REPL PAG->dFecFacPag WITH DATE()
 		  REPL PAG->dPagopoPag WITH ANO->dOpoPenAno
 		  REPL PAG->dPagextPag WITH ANO->dExtPenAno

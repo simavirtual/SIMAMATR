@@ -375,6 +375,7 @@ FUNCTION RevisarDbf(aP1,lShared,nModCry,cCodSui,cNomEmp,cNomSis,;
 	    !FILE(cPatSis+'\'+FileDoc+cAnoUsr+ExtFile) .AND.;
 	    !FILE(cPatSis+'\'+FileCon)                 .AND.;
 	    !FILE(cPatSis+'\'+FileTar)                 .AND.;
+	    !FILE(cPatSis+'\'+FileDes)                 .AND.;
 	    !FILE(cPatSis+'\'+FileBan)                 .AND.;
 	    !FILE(cPatSis+'\'+FilePag)                 .AND.;
 	    !FILE(cPatSis+'\'+FileNiv+cAnoSis+ExtFile) .AND.;
@@ -414,6 +415,17 @@ FUNCTION RevisarDbf(aP1,lShared,nModCry,cCodSui,cNomEmp,cNomSis,;
 	      IF !FILE(cPatSis+'\'+FileTar)
 		 RESTSCREEN(0,0,24,79,cSavPan)
 		 RecuDbfTar(lShared,cPatSis,FileTar,lIntUno)
+	      ENDIF
+
+	      IF !FILE(cPatSis+'\'+FileDes)
+		 RESTSCREEN(0,0,24,79,cSavPan)
+		 RecuDbfDes(lShared,nModCry,cPatSis,FileDes)
+		 lndexar := .T.
+	      ENDIF
+
+	      IF !FILE(cPatSis+'\'+FileCmv)
+		 RESTSCREEN(0,0,24,79,cSavPan)
+		 RecuDbfCmv(lShared,nModCry,cPatSis,FileCmv)
 	      ENDIF
 
 	      IF !FILE(cPatSis+'\'+FileBan)
@@ -480,9 +492,10 @@ FUNCTION RevisarDbf(aP1,lShared,nModCry,cCodSui,cNomEmp,cNomSis,;
 	  !FILE(PathUno+'\'+PathSis+'\'+Ntx1Per) .OR.;
 	  !FILE(PathUno+'\'+PathSis+'\'+fNtxObG) .OR.;
 	  !FILE(cPatSis+'\'+fNtxPag) .OR.;
+	  !FILE(cPatSis+'\'+fNtxDes)
 	  !FILE(cPatSis+'\'+fNtxAdm) .OR.;
 	  !FILE(cPatSis+'\'+Ntx1Adm) .OR.;
-	  !FILE(cPatSis+'\'+Ntx2Adm)
+	  !FILE(cPatSis+'\'+Ntx2Adm) .OR.;
 
 	  RESTSCREEN(0,0,24,79,cSavPan)
 	  Indexar(lShared,cAnoUsr,cPatSis,cMaeAlu,PathUno)
@@ -538,6 +551,14 @@ FUNCTION RevisarDbf(aP1,lShared,nModCry,cCodSui,cNomEmp,cNomSis,;
 
 	nActStrSib(lShared,nModCry,cPatSis,FileSib)
      *ÀActualizaci¢n del Sisben
+
+       nActStrCmv(lShared,nModCry,cPatSis,FileCmv)
+
+
+       IF nActStrDes(lShared,nModCry,cPatSis,FileDes) == 0
+	  lndexar := .T.
+       ENDIF
+     *ÀActualizaci¢n de Descuentos
 *>>>>FIN ACTUALIZACION DE ESTRUCTURAS
 
 *>>>>INDEXAR LOS ARCHIVOS
@@ -715,6 +736,9 @@ FUNCTION CrearDbfs(lShared,nModCry,cPatSis,cAnoUsr,lIntUno,;
        CreaDbfTar(lShared,cPatSis,FileTar,lIntUno)
        Termometro(40)
 
+       Termometro(45)
+       CreaDbfDes(lShared,nModCry,cPatSis,FileDes)
+
        CreaDbfBan(lShared,nModCry,cPatSis,FileBan)
        Termometro(50)
 
@@ -837,7 +861,9 @@ FUNCTION Indexar(lShared,cAnoUsr,cPatSis,cMaeAlu,PathUno)
 *>>>>SELECCION DE LAS AREAS DE TRABAJO
        IF !lUseDbf(.T.,cPatSis+'\'+;
 		       FileAdm+cAnoUsr+ExtFile,'ADM',NIL,lShared) .OR.;
-	  !lUseDbf(.T.,cPatSis+'\'+FilePag,'PAG',NIL,lShared)
+	  !lUseDbf(.T.,cPatSis+'\'+FilePag,'PAG',NIL,lShared) .OR.;
+	  !lUseDbf(.T.,cPatSis+'\'+FileDes,'DES',NIL,lShared)
+
 	  cError('ABRIENDO ARCHIVOS')
 	  CLOSE ALL
 	  RETURN NIL
@@ -861,10 +887,17 @@ FUNCTION Indexar(lShared,cAnoUsr,cPatSis,cMaeAlu,PathUno)
        Ntx2Adm := cPatSis+'\'+Ntx2Adm
        INDEX ON ADM->cNombreEst TO &Ntx2Adm
 
-       Termometro(100)
+       Termometro(80)
        SELECT PAG
        INDEX ON PAG->cCodigoEst+PAG->cMatricPag;
 	     TO &(cPatSis+'\'+fNtxPag)
+
+       Termometro(100)
+       SELECT DES
+       INDEX ON DES->cCodigoEst+STR(DES->nNroMesDes,2);
+	     TO &(cPatSis+'\'+fNtxDes)
+       CloseDbf('DES',cPatSis+'\'+FileDes)
+       Termometro(25)
 *>>>>FIN CREACION DEL INDICES DEL SISTEMA
 
 *>>>>CREACION DE LOS INDICES COMPARTIDOS
@@ -1020,7 +1053,9 @@ FUNCTION aMenusMatr(lShared,nNroOpc,cDerech,aAyudas,cModem)
 			'4<'+cModem+'>',;
 			'5<INFORMES FACTURACION>',;
 			'6<CONCEPTOS ALUMNOS   >',;
-			'7<PAGOS EN LINEA      >'}
+			'7<PAGOS EN LINEA      >',;
+			'8<DESCUENTOS/RECARGOS >',;
+			'9<CONSIGNACIONES      >'}
 
 	    aAyuda := {'Permite Facturar los recibos de los alumnos nuevos',;
 		       'Permite Facturar los recibos de los alumnos antiguos',;
@@ -1028,7 +1063,9 @@ FUNCTION aMenusMatr(lShared,nNroOpc,cDerech,aAyudas,cModem)
 		       'Procesa los Movimientos del archivo transferido por Modem ',;
 		       'Permite imprimir los diferentes informes de la Facturaci¢n.',;
 		       'Permite Asignar los Conceptos de Pago Individuales al Estudiante',;
-		       'Permite generar la facturaci¢n en archivo para los pagos en linea'}
+		       'Permite generar la facturaci¢n en archivo para los pagos en linea',;
+		       'Permite aplicar descuentos o recargos indivuales',;
+		       'Permite imprimir recibos para hacer consignaciones'}
 
        CASE nNroOpc == 6
 
@@ -1101,7 +1138,7 @@ FUNCTION aMenusMatr(lShared,nNroOpc,cDerech,aAyudas,cModem)
 *>>>>FIN SELECCION DEL MENU
 
 /*************************************************************************
-* TITULO DE LA FUNCION......: EJECUCION MENUS PRIMER NIVEL               *
+* TITULO......: EJECUCION MENUS PRIMER NIVEL                             *
 **************************************************************************
 
 AUTOR: Nelson Fern ndez G¢mez       FECHA DE CREACION: DIC 29/95 JUE A
@@ -1538,6 +1575,14 @@ FUNCTION SubMenus(aP1,;
 		 CASE nNroOpc == 7
 		      Matri_507(aP1,aP2,aP3)
 		    *ÀPago en Cajeros
+
+		 CASE nNroOpc == 8
+		      MantenDes(aP1,aP2,aP3)
+		    *ÀDescuentos Individuales
+
+		 CASE nNroOpc == 9
+		      Matri_509(aP1,aP2,aP3)
+		    *ÀFacturaci¢n - Consignaciones
 
 		 ENDCASE
 

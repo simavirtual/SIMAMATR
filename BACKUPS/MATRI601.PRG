@@ -215,7 +215,6 @@ FUNCTION Matri_601(aParam1,aParam2,aParam3,;
        ENDIF
 *>>>>FIN LECTURA Y VALIDACION DEL A¥O
 
-
 *>>>>SELECION DEL A¥O ANTERIOR
        DO CASE
        CASE nOpcion == 1 // NUEVOS
@@ -463,7 +462,7 @@ FUNCTION Matri_601(aParam1,aParam2,aParam3,;
 	    cNivPro := SUBS(&cNalias->cCodigoGru,1,2)
 	    DO CASE
 	    CASE VAL(cNivPro) >= 12 .AND. VAL(cNivPro) <= 16
-		 cCamPro := 'cCOLE13Est'
+		 cCamPro := 'cCOLE'+cNivPro+'Est'
 
 	    CASE VAL(cNivPro) >= 0 .AND. VAL(cNivPro) <= 5
 		 cCamPro := 'cCOLE'+cNivPro+'Est'
@@ -823,6 +822,9 @@ FUNCTION Matri_601(aParam1,aParam2,aParam3,;
 		    REPL &cAliasN->cCole10Est WITH &cNalias->cCole10Est
 		    REPL &cAliasN->cCole11Est WITH &cNalias->cCole11Est
 		    REPL &cAliasN->cCole12Est WITH &cNalias->cCole12Est
+		    REPL &cAliasN->cCole14Est WITH &cNalias->cCole14Est
+		    REPL &cAliasN->cCole15Est WITH &cNalias->cCole15Est
+		    REPL &cAliasN->cCole16Est WITH &cNalias->cCole16Est
 
 		    cCamPro := cAliasN+'->'+cCamPro
 		    cNivel := SUBS(cNomNiv(cNivPro)+SPACE(10),1,10)

@@ -369,66 +369,6 @@ FUNCTION nActStrAdm(lShared,PathAdm,FileAdm)
 
 
 /*************************************************************************
-* TITULO DE LA FUNCION..: LECTURA DEL CODIGO DEL ASPIRANTE               *
-**************************************************************************
-
-AUTOR: Nelson Fern ndez G¢mez       FECHA DE CREACION: ENE 03/96 MIE A
-       Colombia, Bucaramanga        INICIO: 03:40 PM   ENE 03/96 MIE
-
-OBJETIVOS:
-
-1)- Lee el n£mero de inscripci¢n del aspirante
-
-2)- Retorna NIL
-
-SINTAXIS:
-  lLeeCodAdm()
-
-*------------------------------------------------------------------------*
-*                              PROGRAMA                                  *
-*------------------------------------------------------------------------*/
-
-FUNCTION lLeeCodAdm(nNroFil,nNroCol,cNroIns,bValida)
-
-*>>>>PARAMETROS DE LA FUNCION
-/*     nNroFil                              // Fila de lectura
-       nNroCol                              // Columna de lectura
-       cNroIns			            // N£mero de la inscripci¢n
-       bValida                              // Code Block de Validacion */
-*>>>>FIN PARAMETROS DE LA FUNCION
-
-*>>>>DECLARACION DE VARIABLES
-       #INCLUDE "inkey.ch"                  // Declaraci¢n de teclas
-
-       LOCAL cSavLin := ''                  // Salvar l¡nea
-       LOCAL lSalir  := .F.                 // .T. codigo con ceros. Salir
-       LOCAL GetList := {}                  // Variable del sistema
-*>>>>FIN DECLARACION DE VARIABLES
-
-*>>>>CAPTURA DEL CODIGO
-       SET ESCAPE ON   // Activa la <ESC> en los GET
-
-       cSavLin := SAVESCREEN(21,0,21,79)
-       Centrar('ENTRE EL NUMERO DE LA INSCRIPCION. '+;
-	       '<ENTER> o <ESC> PARA TERMINAR',21)
-
-       cNroIns := cSpaces('ADM','cNumeroAdm')
-
-       @ nNroFil,nNroCol GET cNroIns PICT '9999';
-			 VALID lCorrecion(@cNroIns) .AND.;
-			 IF(EMPTY(cNroIns),.T.,EVAL(bValida))
-       READ
-       RESTSCREEN(21,0,21,79,cSavLin)
-       SET ESCAPE OFF               // Activa la <ESC> en los GET
-
-       IF LASTKEY() == K_ESC .OR. EMPTY(cNroIns)
-	  lSalir := .T.
-       ENDIF
-       RETURN lSalir
-*>>>>FIN CAPTURA DEL CODIGO
-
-
-/*************************************************************************
 * TITULO DE LA FUNCION..: BUSCAR EL CODIGO DEL CANDIDATO                 *
 **************************************************************************
 

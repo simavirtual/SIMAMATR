@@ -18,6 +18,7 @@
        fi \SimaClip.v52\SimaMatr\f\objs\FTipoMat
        fi \SimaClip.v52\SimaMatr\f\objs\FuncsRec
        fi \SimaClip.v52\SimaMatr\f\objs\FuncsTra
+       fi \SimaClip.v52\SimaMatr\f\objs\FuncsDes
        fi \SimaClip.v52\SimaMatr\f\objs\OtrTra01
        fi \SimaClip.v52\SimaMatr\f\objs\OtrTra04
        fi \SimaClip.v52\SimaMatr\f\objs\OtrTra07
