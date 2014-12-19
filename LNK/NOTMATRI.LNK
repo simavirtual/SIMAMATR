@@ -9,5 +9,5 @@
 #------------------------------------------------------------------------*
 
 #>>>>MODULOS EXCLUIDOS
-       DEFINE aTotConFac,nNroMesFac,lAbonos,nVlrInt,Sumarrcon
+       DEFINE aTotConFac,nNroMesFac,lAbonos,nVlrInt
 #>>>>FIN MODULOS EXCLUIDOS
