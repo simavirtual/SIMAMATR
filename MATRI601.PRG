@@ -480,6 +480,8 @@ FUNCTION Matri_601(aParam1,aParam2,aParam3,;
 	    ENDIF
 **********FIN SELECION DE LAS AREAS DE TRABAJO
 
+/*
+
 **********PAZ Y SALVO
 	    IF !EMPTY(PathDos) .AND. nOpcion == 2
 
@@ -514,6 +516,8 @@ FUNCTION Matri_601(aParam1,aParam2,aParam3,;
 
 	    ENDIF
 **********FIN PAZ Y SALVO
+
+*/
 
 **********SELECCION DE COLEGIO DE PROCEDENCIA
 	    cNivPro := SUBS(&cNalias->cCodigoGru,1,2)

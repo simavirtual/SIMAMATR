@@ -33,7 +33,7 @@ OBJETIVOS:
       Tarifas
       Pagos */
 
-      LOCAL cVerSis := ' XML214.10'            // Versi¢n Actual
+      LOCAL cVerSis := ' XML215.01-1'            // Versi¢n Actual
 *>>>>FIN ARCHIVOS DEL SISTEMA
 
 /*

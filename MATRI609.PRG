@@ -243,8 +243,8 @@ FUNCTION Matri_609(aParam1,aParam2,aParam3)
        IF MTR->lPrnArcMtr
 	  SET DEVICE TO PRINT
        ELSE
-	  FilePrn := 'Listaspr'
-	  nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,MTR->cOpcPrnMtr,.T.,.F.,bInsIso)
+	  FilePrn := 'Lista'+cMaeAct
+	  nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,MTR->cOpcPrnMtr,.T.,.F.,bInsIso,PathDoc)
 	  IF EMPTY(nOpcPrn)
 	     CloseAll(aUseDbf)
 	     RETURN NIL

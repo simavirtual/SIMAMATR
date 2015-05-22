@@ -2034,13 +2034,22 @@ FUNCTION OtrDes012(aP1,aP2,aP3,oBrowse)
 
 ***********ANALISIS DE LA FECHA DE PAGO
 	     IF lPrnFec
-		IF (DES->dFechaDes < dFecIni  .OR.;
-		    DES->dFechaDes > dFecFin)
 
-		    DES->(DBSKIP())
-		    LOOP
+		IF lHayPag
 
+		   IF (PAG->dFecPagPag < dFecIni  .OR.;
+		       PAG->dFecPagPag > dFecFin)
+
+		       DES->(DBSKIP())
+		       LOOP
+
+		   ENDIF
+
+		ELSE
+		   DES->(DBSKIP())
+		   LOOP
 		ENDIF
+
 	     ENDIF
 ***********FIN ANALISIS DE LA FECHA DE PAGO
 
@@ -2077,7 +2086,11 @@ FUNCTION OtrDes012(aP1,aP2,aP3,oBrowse)
 	     AADD(aRegPrn,DES->cCodigoEst)
 	     AADD(aRegPrn,cCodigoTgr)
 	     AADD(aRegPrn,cNombreTes)
-	     AADD(aRegPrn,cFecha(DES->dFechaDes))
+	     IF lHayPag .AND. DES->cCodigoEst == PAG->cCodigoEst
+		AADD(aRegPrn,cFecha(PAG->dFecPagPag))
+	     ELSE
+		AADD(aRegPrn,'')
+	     ENDIF
 	     AADD(aRegPrn,cTxtTem+DES->cDescriDes)
 	     AADD(aRegPrn,cTipDes())
 	     AADD(aRegPrn,TRANS(DES->nValorDes,'@Z ####,###,###'))

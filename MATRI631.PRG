@@ -373,7 +373,7 @@ FUNCTION PrnTotMat(lShared,cNomEmp,cNomSis,cPatSis,;
 	  SET DEVICE TO PRINT
        ELSE
 	  FilePrn := 'TotalMtr'
-	  nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,MTR->cOpcPrnMtr,.F.,.F.,bInsIso)
+	  nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,MTR->cOpcPrnMtr,.F.,.F.,bInsIso,PathDoc)
 	  IF EMPTY(nOpcPrn)
 	      RETURN NIL
 	  ENDIF
