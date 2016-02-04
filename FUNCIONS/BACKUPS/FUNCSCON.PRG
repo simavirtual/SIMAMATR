@@ -1143,3 +1143,4 @@ FUNCTION lValLeeCon(nNroFil,nNroCol,nFilCon,nColCon,cConcep)
        cConcep := cCodigoTco+SPACE(LEN(cConcep)-LEN(cCodigoTco))
        RETURN .T.
 *>>>>FIN LECTURA DE LOS CONCEPTOS
+

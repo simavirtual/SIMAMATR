@@ -97,11 +97,16 @@ FUNCTION CreaDbfAdm(lShared,PathAdm,FileAdm,lIntUno,fNtxAdm,aStrDbf)
        AADD(aDbfStr,{"lSexFemEst","Logical"  ,01,0}) // .T. Sexo Femenino .F. Sexo Masculino
        AADD(aDbfStr,{"cNomEpsEst","Character",30,0}) // Nombre de la Eps del Estudiante
        AADD(aDbfStr,{"cGrupRhEst","Character",04,0}) // Nombre de la Eps del Estudiante
+       AADD(aDbfStr,{"cViveCoEst","Character",40,0}) // *Estudiante vive con.
+       AADD(aDbfStr,{"nNroHerEst","Numeric"  ,02,0}) // *N£mero de Hermanos.
+       AADD(aDbfStr,{"cHerGruEst","Character",40,0}) // *Grupo de los Hermanos
      *ÀInformaci¢n personal
 
        AADD(aDbfStr,{"cDireccEst","Character",100,0}) // Direcci¢n del Estudiante
-       AADD(aDbfStr,{"cBarrioEst","Character",16,0}) // Barrio de la Residencia
-       AADD(aDbfStr,{"cCiudadEst","Character",30,0}) // Ciudad del Estudiante
+       AADD(aDbfStr,{"cBarrioEst","Character",16,0})  // Barrio de la Residencia
+       AADD(aDbfStr,{"cCiudadEst","Character",30,0})  // Ciudad del Estudiante
+       AADD(aDbfStr,{"cLocaliEst","Character",30,0})  // *Localidad.
+       AADD(aDbfStr,{"cZonaDiEst","Character",30,0})  // *Zona de la Direcci¢n.
      *ÀDireccion del Estudiante
 
        AADD(aDbfStr,{"cTelefnEst","Character",14,0}) // Telefono del Estudiante
@@ -366,66 +371,6 @@ FUNCTION nActStrAdm(lShared,PathAdm,FileAdm)
        ENDIF
        RETURN nNroErr
 *>>>>FIN ACTUALIZACION DE LA STRUCTURA
-
-
-/*************************************************************************
-* TITULO DE LA FUNCION..: LECTURA DEL CODIGO DEL ASPIRANTE               *
-**************************************************************************
-
-AUTOR: Nelson Fern ndez G¢mez       FECHA DE CREACION: ENE 03/96 MIE A
-       Colombia, Bucaramanga        INICIO: 03:40 PM   ENE 03/96 MIE
-
-OBJETIVOS:
-
-1)- Lee el n£mero de inscripci¢n del aspirante
-
-2)- Retorna NIL
-
-SINTAXIS:
-  lLeeCodAdm()
-
-*------------------------------------------------------------------------*
-*                              PROGRAMA                                  *
-*------------------------------------------------------------------------*/
-
-FUNCTION lLeeCodAdm(nNroFil,nNroCol,cNroIns,bValida)
-
-*>>>>PARAMETROS DE LA FUNCION
-/*     nNroFil                              // Fila de lectura
-       nNroCol                              // Columna de lectura
-       cNroIns			            // N£mero de la inscripci¢n
-       bValida                              // Code Block de Validacion */
-*>>>>FIN PARAMETROS DE LA FUNCION
-
-*>>>>DECLARACION DE VARIABLES
-       #INCLUDE "inkey.ch"                  // Declaraci¢n de teclas
-
-       LOCAL cSavLin := ''                  // Salvar l¡nea
-       LOCAL lSalir  := .F.                 // .T. codigo con ceros. Salir
-       LOCAL GetList := {}                  // Variable del sistema
-*>>>>FIN DECLARACION DE VARIABLES
-
-*>>>>CAPTURA DEL CODIGO
-       SET ESCAPE ON   // Activa la <ESC> en los GET
-
-       cSavLin := SAVESCREEN(21,0,21,79)
-       Centrar('ENTRE EL NUMERO DE LA INSCRIPCION. '+;
-	       '<ENTER> o <ESC> PARA TERMINAR',21)
-
-       cNroIns := cSpaces('ADM','cNumeroAdm')
-
-       @ nNroFil,nNroCol GET cNroIns PICT '9999';
-			 VALID lCorrecion(@cNroIns) .AND.;
-			 IF(EMPTY(cNroIns),.T.,EVAL(bValida))
-       READ
-       RESTSCREEN(21,0,21,79,cSavLin)
-       SET ESCAPE OFF               // Activa la <ESC> en los GET
-
-       IF LASTKEY() == K_ESC .OR. EMPTY(cNroIns)
-	  lSalir := .T.
-       ENDIF
-       RETURN lSalir
-*>>>>FIN CAPTURA DEL CODIGO
 
 
 /*************************************************************************

@@ -228,6 +228,7 @@ FUNCTION MantenDes(aP1,aP2,aP3)
        AADD(aUseDbf,{.T.,cPatSis+'\'+FileBan,'BAN',NIL,lShared,nModCry})
        AADD(aUseDbf,{.T.,cPatSis+'\'+FileCon,'CON',NIL,lShared,nModCry})
        AADD(aUseDbf,{.T.,cPatSis+'\'+FileDes,'DES',NIL,lShared,nModCry})
+       AADD(aUseDbf,{.T.,cPatSis+'\'+FilePag,'PAG',NIL,lShared,nModCry})
 
        IF !lUseMae(lShared,cPatAnt,cMaeAlu,SUBS(cAnoAnt,3,2)) .OR.;
 	  !lUseDbfs(aUseDbf)
@@ -784,6 +785,13 @@ FUNCTION IncluirDes(lShared,nFilInf,nColInf,nFilPal,cNomEmp,;
 	    @ nNroFil,aNroCol[3] SAY cNombreTes
 **********FIN VALIDACION DEL CODIGO
 
+**********VALIDACION DEL CUPO
+	    IF !&cNalias->lSiCupoEst
+	       cError(cNombreTes+' NO TIENE CUPO')
+	       LOOP
+	    ENDIF
+**********FIN VALIDACION DEL CUPO
+
 **********IMPRESION DEL ESTUDIANTE
 	     cNombreTes := SUBS(cNombreTes,1,26)
 	     @ nNroFil,aNroCol[2] SAY &cNalias->cCodigoGru
@@ -1167,9 +1175,11 @@ FUNCTION MenuOtrDes(aP1,aP2,aP3,oBrowse)
 *>>>>FIN DECLARACION DE VARIABLES
 
 *>>>>DECLARCION Y EJECUCION DEL MENU
-       AADD(aMenus,'1<IMPRESION DE DESCUENTOS/RECARGOS>')
+       AADD(aMenus,'1<IMPRESION DE DESCUENTOS/RECARGOS >')
+       AADD(aMenus,'2<DESCUENTOS/RECARGOS POR CONCEPTOS>')
 
        AADD(aAyuda,'Permite Imprimir la Relaci¢n de Abonos,Descuentos y Recargos')
+       AADD(aAyuda,'Permite Imprimir la Relaci¢n de Abonos,Descuentos y Recargos por Conceptos')
 
        cSavPan := SAVESCREEN(0,0,24,79)
        nNroOpc := nMenu(aMenus,aAyuda,10,25,NIL,NIL,1,.F.)
@@ -1186,6 +1196,11 @@ FUNCTION MenuOtrDes(aP1,aP2,aP3,oBrowse)
 
 	    OtrDes011(aP1,aP2,aP3,oBrowse)
 	   *Impresi¢n Abonos,Descuentos y recargos
+
+       CASE nNroOpc == 2
+
+	    OtrDes012(aP1,aP2,aP3,oBrowse)
+	   *Impresi¢n Abonos,Descuentos y recargos por conceptos
 
        ENDCASE
        RETURN NIL
@@ -1652,4 +1667,614 @@ FUNCTION OtrDes011(aP1,aP2,aP3,oBrowse)
        SET FILTER TO
        RETURN NIL
 *>>>>FIN IMPRESION DERECHOS
+
+
+/*************************************************************************
+* TITULO..: DESCUENTOS RECARGOS POR CONCEPTOS                            *
+**************************************************************************
+
+AUTOR: Nelson Fern ndez G¢mez       FECHA DE CREACION: DIC 17/2014 MIE A
+       Colombia, Bucaramanga        INICIO: 09:00 AM   DIC 17/2014 MIE
+
+OBJETIVOS:
+
+1- Debe estar en uso el archivo
+
+2- Permite imprimir los abonos descuentos y recargos por conceptos.
+
+3- Retorna Nil
+
+*------------------------------------------------------------------------*
+*                              PROGRAMA                                  *
+*------------------------------------------------------------------------*/
+
+FUNCTION OtrDes012(aP1,aP2,aP3,oBrowse)
+
+*>>>>DESCRIPCION DE PARAMETROS
+/*     aP1                                  // Parametros Generales
+       aP2                                  // Parametros Generales
+       aP3                                  // Parametros Generales
+       oBrowse                              // Browse del Archivo */
+*>>>>FIN DESCRIPCION DE PARAMETROS
+
+*>>>>DECLARACION PARAMETROS GENERALES
+       LOCAL lShared := xPrm(aP1,'lShared') // .T. Sistema Compartido
+       LOCAL nModCry := xPrm(aP1,'nModCry') // Modo de Protecci¢n
+       LOCAL cCodSui := xPrm(aP1,'cCodSui') // C¢digo del Sistema
+       LOCAL cNomSis := xPrm(aP1,'cNomSis') // Nombre del Sistema
+     *ÀDetalles del Sistema
+
+       LOCAL cEmpPal := xPrm(aP1,'cEmpPal') // Nombre de la Empresa principal
+       LOCAL cNitEmp := xPrm(aP1,'cNitEmp') // Nit de la Empresa
+       LOCAL cNomEmp := xPrm(aP1,'cNomEmp') // Nombre de la Empresa
+       LOCAL cNomSec := xPrm(aP1,'cNomSec') // Nombre de la Empresa Secundario
+       LOCAL cCodEmp := xPrm(aP1,'cCodEmp') // C¢digo de la Empresa
+     *ÀDetalles de la Empresa
+
+       LOCAL cNomUsr := xPrm(aP1,'cNomUsr') // Nombre del Usuario
+       LOCAL cAnoUsr := xPrm(aP1,'cAnoUsr') // A¤o del usuario
+       LOCAL cAnoSis := xPrm(aP1,'cAnoSis') // A¤o del sistema
+       LOCAL cPatSis := xPrm(aP1,'cPatSis') // Path del sistema
+     *ÀDetalles del Usuario
+
+       LOCAL PathW01 := xPrm(aP1,'PathW01') // Sitio del Sistema No.01
+       LOCAL PathW02 := xPrm(aP1,'PathW02') // Sitio del Sistema No.02
+       LOCAL PathW03 := xPrm(aP1,'PathW03') // Sitio del Sistema No.03
+       LOCAL PathW04 := xPrm(aP1,'PathW04') // Sitio del Sistema No.04
+       LOCAL PathW05 := xPrm(aP1,'PathW05') // Sitio del Sistema No.05
+       LOCAL PathW06 := xPrm(aP1,'PathW06') // Sitio del Sistema No.06
+       LOCAL PathW07 := xPrm(aP1,'PathW07') // Sitio del Sistema No.07
+       LOCAL PathW08 := xPrm(aP1,'PathW08') // Sitio del Sistema No.08
+       LOCAL PathW09 := xPrm(aP1,'PathW09') // Sitio del Sistema No.09
+       LOCAL PathW10 := xPrm(aP1,'PathW10') // Sitio del Sistema No.10
+     *ÀSitios del Sistema
+
+       LOCAL PathUno := xPrm(aP1,'PathUno') // Path de Integraci¢n Uno
+       LOCAL PathDos := xPrm(aP1,'PathDos') // Path de Integraci¢n Dos
+       LOCAL PathTre := xPrm(aP1,'PathTre') // Path de Integraci¢n Tres
+       LOCAL PathCua := xPrm(aP1,'PathCua') // Path de Integraci¢n Cuatro
+     *ÀPath de Integraci¢n
+
+       LOCAL nFilPal := xPrm(aP1,'nFilPal') // Fila Inferior Men£ principal
+       LOCAL nFilInf := xPrm(aP1,'nFilInf') // Fila Inferior del SubMen£
+       LOCAL nColInf := xPrm(aP1,'nColInf') // Columna Inferior del SubMen£
+     *ÀDetalles Tecnicos
+
+       LOCAL cMaeAlu := xPrm(aP1,'cMaeAlu') // Maestros habilitados
+       LOCAL cMaeAct := xPrm(aP1,'cMaeAct') // Maestro Actual
+       LOCAL cJornad := xPrm(aP1,'cJornad') // Jornadas habilitadas
+       LOCAL cJorTxt := xPrm(aP1,'cJorTxt') // Jornada escogida
+     *ÀDetalles Acad‚micos
+*>>>>FIN DECLARACION PARAMETROS GENERALES
+
+*>>>>DECLARACION DE VARIABLES
+       #INCLUDE "ARC-MATR.PRG"              // Archivos del Sistema
+
+       LOCAL cSavPan := ''                  // Salvar Pantalla
+       LOCAL lHayErr := .F.                 // .T. Hay Error
+     *ÀVariables Generales
+
+       LOCAL     i,j := 0                   // Contadores
+       LOCAL cOpcSys := ''                  // Opci¢n del Sistema
+       LOCAL nNroIso := ''                  // N£mero Iso del Informe
+       LOCAL cCodIso := ''                  // C¢digo Iso del Informe
+       LOCAL aTitIso := ''                  // T¡tulo Iso del Informe
+       LOCAL cPiePag := ''                  // Pie de P gina por defecto
+       LOCAL aPieIso := {}		    // Textos del pie de p gina
+       LOCAL nTotPie := 0                   // Total de Pie de p ginas
+       LOCAL aMezIso := {}                  // Campos a Mesclar
+       LOCAL bInsIso := NIL                 // Block de Gestion Documental
+     *ÀVariables Gestion Documental
+
+       LOCAL nRegPrn := 0                   // Registro de Impresi¢n
+       LOCAL cFecPrn := ''                  // @Fecha de Impresi¢n
+       LOCAL cHorPrn := ''                  // @Hora de Impresi¢n
+       LOCAL cDiaPrn := ''                  // @D¡a de Impresi¢n
+       LOCAL nNroPag := 1                   // N£mero de p gina
+       LOCAL lTamAnc := .F.                 // .T. Tama¤o Ancho
+       LOCAL nLinTot := 0                   // L¡neas totales de control
+       LOCAL nTotReg := 0                   // Total de registros
+       LOCAL aCabPrn := {}                  // Encabezado del informe General
+       LOCAL aCabeza := {}                  // Encabezado del informe
+       LOCAL cCodIni := ''                  // C¢digos de impresi¢n iniciales
+       LOCAL cCodFin := ''                  // C¢digos de impresi¢n finales
+       LOCAL aNroCol := {}                  // Columnas de impresi¢n
+       LOCAL aTitPrn := {}                  // T¡tulos para impresi¢n
+       LOCAL aRegPrn := {}                  // Registros para impresi¢n
+       LOCAL cCabCol := ''                  // Encabezado de Columna
+       LOCAL aCabSec := {}                  // Encabezado Secundario
+       LOCAL nLenPrn := 0                   // Longitud l¡nea de impresi¢n
+       LOCAL lCentra := .F.                 // .T. Centrar el informe
+       LOCAL nColCab := 0                   // Columna del encabezado
+       LOCAL bPagina := NIL                 // Block de P gina
+       LOCAL bCabeza := NIL                 // Block de Encabezado
+       LOCAL bDerAut := NIL                 // Block Derechos de Autor
+       LOCAL nLinReg := 1                   // L¡neas del registro
+       LOCAL cTxtPrn := ''                  // Texto de impresi¢n
+       LOCAL nOpcPrn := 0                   // Opci¢n de Impresi¢n
+       LOCAL aCabXml := {}                  // Encabezado del Xml
+       LOCAL aCamXml := {}                  // Campo Xml
+       LOCAL aRegXml := {}                  // Registro Xml
+     *ÀVariables de informe
+
+       LOCAL nNroFil := 0                   // N£mero de la Fila
+       LOCAL dFecIni := CTOD('00/00/00')    // Fecha Inicial
+       LOCAL dFecFin := CTOD('00/00/00')    // Fecha Final
+       LOCAL lPrnFec := .F.                 // .T. Imprimir por Fechas
+       LOCAL lValida := .F.                 // Validar Descuentos
+       LOCAL cNalias := ''                  // Alias del maestro
+       LOCAL lHayPag := .F.                 // .T. Hay Pago
+       LOCAL cTxtTem := ''                  // Texto Temporal
+
+       LOCAL aVlrCon := {}                  // Descriminaci¢n por Conceptos
+       LOCAL nTotDes := 0                   // Total Descuentos
+       LOCAL nTotRec := 0                   // Total Recargos
+       LOCAL nTotPag := 0                   // Total Pagos Parciales
+       LOCAL aTotDes := {}                  // Descriminaci¢n de Descuentos
+       LOCAL aTotRec := {}                  // Descriminaci¢n de Recargos
+       LOCAL aTotPag := {}                  // Descriminaci¢n de Pagos Parciales
+       LOCAL GetList := {}                  // Variable del sistema
+
+       LOCAL nNroMesTde := 0                // Mes del descuento
+       LOCAL cCodigoTgr := ''               // C¢digo del Grupo
+       LOCAL cNombreTes := ''               // Nombre del estudiante
+     *ÀVariables temporales de campo
+*>>>>FIN DECLARACION DE VARIABLES
+
+*>>>>CAPTURA DEL MES
+       nNroMesTde := 13
+*>>>>FIN CAPTURA DEL MES
+
+*>>>>LECTURA DEL INTERVALO DE FECHAS
+       dFecIni := CTOD('00/00/00')
+       dFecFin := CTOD('00/00/00')
+
+       IF lPregunta('DESEA EL INFORME POR INTERVALO DE FECHAS? No Si')
+
+	  SET CURSOR ON
+	  cSavPan := SAVESCREEN(0,0,24,79)
+	  nNroFil := nMarco(10,'FECHA DE CORTE:',15,' ',NIL,20,47)
+
+	  @ 22,20 SAY 'INGRESE LA FECHA EN EL SGTE ORDEN: (MM/DD/AA)'
+	  @ nNroFil  ,21 SAY 'FECHA INICIAL :' GET dFecIni PICT '@D'
+	  @ nNroFil+1,21 SAY 'FECHA FINAL   :' GET dFecFin PICT '@D'
+	  READ
+
+	  SET CURSOR OFF
+	  RESTSCREEN(0,0,24,79,cSavPan)
+
+	  IF EMPTY(dFecIni) .OR. EMPTY(dFecFin)
+	     RETURN NIL
+	  ENDIF
+
+       ENDIF
+*>>>>FIN LECTURA DEL INTERVALO DE FECHAS
+
+*>>>>ANALISIS DE LA IMPRESION POR FECHAS
+       IF EMPTY(dFecIni) .AND. EMPTY(dFecFin)
+	  lPrnFec := .F.
+       ELSE
+	  lPrnFec := .T.
+       ENDIF
+       nTotReg := DES->(RECCOUNT())
+*>>>>FIN ANALISIS DE LA IMPRESION POR FECHAS
+
+*>>>>PREGUNTA DE DECISION
+       lValida := lPregunta('DESEA VALIDAR LOS DESCUENTOS? No SI')
+*>>>>FIN PREGUNTA DE DECISION
+
+*>>>>GESTION DOCUMENTAL DEL INFORME
+       nLenPrn := PCL('n17Stan')
+
+       nNroIso := 542
+     *ÀN£mero de identificaci¢n del informe
+
+       cOpcSys := '<ACTUALIZAR><DESCUENTOS/RECARGOS>'+;
+		  '<ACTIVAR INDIVIDUALES><F9>'+;
+		  '<IMPRESION DE DESCUENTOS/RECARGOS>'
+     *ÀOpci¢n del sistema del informe
+
+       aMezIso := {}
+       AADD(aMezIso,{'<cAnoUsr>',cAnoUsr})
+       AADD(aMezIso,{'<cJorTxt>',cJorTxt})
+     *ÀCampos a sustituir
+
+       aTitIso := {}
+       AADD(aTitIso,'A¥O: <cAnoUsr> JORNADA: <cJorTxt>')        // T¡tulo Uno
+       AADD(aTitIso,'RELACION DE DESCUENTOS, RECARGOS') // T¡tulo Dos
+       AADD(aTitIso,'')                                         // T¡tulo Tres
+     *ÀT¡tulos del Informe por defecto
+
+       cPiePag := ALLTRIM(MTR->cPiePagMtr)
+       IF !EMPTY(cPiePag)
+	  cPiePag := SPACE((nLenPrn-LEN(cTxtPrn))/2)+cPiePag
+       ENDIF
+
+       aPieIso := {}
+       AADD(aPieIso,'')                 // Pie de p gina Uno
+       AADD(aPieIso,'')                 // Pie de p gina Dos
+       AADD(aPieIso,IF(EMPTY(cPiePag),'',cPiePag))  // Pie de p gina Tres
+     *ÀPie de p ginas por defecto
+
+       bInsIso := {||lModRegIso(lShared,cNomUsr,oBrowse,;
+				nNroIso,aTitIso[1],cOpcSys)}
+     *ÀInclusi¢n o modificaci¢n de la gesti¢n docuemental
+*>>>>FIN GESTION DOCUMENTAL DEL INFORME
+
+*>>>>ACTIVACION DE LA IMPRESORA
+       nRegPrn := PRN->(RECNO())
+       nLenPrn := PCL('n17Stan')
+
+       IF MTR->lPrnArcMtr
+	  SET DEVICE TO PRINT
+       ELSE
+	  FilePrn := 'MtrDesCon'
+	  nOpcPrn := nPrinter_On(cNomUsr,@FilePrn,MTR->cOpcPrnMtr,.F.,.T.,bInsIso,PathDoc)
+	  IF EMPTY(nOpcPrn)
+	     RETURN NIL
+	  ENDIF
+       ENDIF
+       SET DEVICE TO SCREEN
+       IF !lPregunta('DESEA CONTINUAR? Si No')
+	  RETURN NIL
+       ENDIF
+*>>>>FIN ACTIVACION DE LA IMPRESORA
+
+*>>>>SUSTITUCION DE TEXTO
+       DetalleIso(nNroIso,@cCodIso,@aTitIso,@aPieIso)
+
+       IF !EMPTY(cCodIso)
+	  cCodIso := 'ISO:'+cCodIso
+       ENDIF
+
+       FOR i := 1 TO LEN(aTitIso)
+	   FOR j := 1 TO LEN(aMezIso)
+	       aTitIso[i] := cReplTxt(aMezIso[j,1],aMezIso[j,2],aTitIso[i])
+	   ENDFOR
+       ENDFOR
+
+       nTotPie := 0
+       FOR i := 1 TO LEN(aPieIso)
+	   IF EMPTY(aPieIso[i])
+	      LOOP
+	   ENDIF
+	   nTotPie++
+       ENDFOR
+*>>>>FIN SUSTITUCION DE TEXTO
+
+*>>>>DEFINICION DEL ENCABEZADO
+       nNroPag := 0
+       lTamAnc := .F.
+       nLinTot := 2
+
+       nTotReg := DES->(RECCOUNT())
+       nTotReg := nTotReg+nLinTot
+
+       aCabPrn := {cNomEmp,cNomSis+cCodIso,;
+		   aTitIso[1],;
+		   aTitIso[2],;
+		   ''}
+
+       aCabeza := {aCabPrn[1],aCabPrn[2],aCabPrn[3],aCabPrn[4],aCabPrn[5],;
+                   nNroPag++,;
+                   cTotPagina(nTotReg),lTamAnc}
+
+       cCodIni := PCL({'DraftOn','Elite','CondenOn'})
+       cCodFin := PCL({'NegraOf','DobGolOf'})
+*>>>>FIN DEFINICION DEL ENCABEZADO
+
+*>>>>ENCABEZADOS DE COLUMNA
+       aNroCol := {06,06,30,12,40,12,12,16,12}
+       aTitPrn := {'CODIGO','GRUPO ','NOMBRE DEL ESTUDIANTE ',;
+		   'FECHA','DESCRIPCION','TIPO','TOTAL','CONCEPTO',;
+		   'VALOR'}
+       aCamXml := aTitPrn
+       cCabCol := cRegPrint(aTitPrn,aNroCol)
+*>>>>FIN ENCABEZADOS DE COLUMNA
+
+*>>>>ANALISIS PARA CENTRAR EL INFORME
+       lCentra := .F.
+       nColCab := 0
+       IF lCentra
+          nColCab := (nLenPrn-LEN(cCabCol))/2
+       ENDIF
+       aCabSec := NIL
+       bPagina := {||lPagina(nLinReg)}
+       bCabeza := {||CabezaPrn(cCodIni,aCabeza,cCabCol,;
+                               nColCab,cCodFin,aCabSec,;
+                               @cFecPrn,@cHorPrn,@cDiaPrn)}
+       bDerAut := {||PiePagPrn(aPieIso,nLenPrn)}
+*>>>>FIN ANALISIS PARA CENTRAR EL INFORME
+
+*>>>>IMPRESION DEL ENCABEZADO
+       SendCodes(PCL('Reset'))
+
+       EVAL(bCabeza)
+       SET DEVICE TO SCREEN
+      *Impresi¢n del Encabezado
+
+       AADD(aCabPrn,cFecPrn)
+       AADD(aCabPrn,cHorPrn)
+       AADD(aCabPrn,cDiaPrn)
+
+       nHanXml := CreaFrmPrn(lShared,FilePrn,aNroCol,nOpcPrn,aCabPrn,aTitPrn)
+*>>>>FIN IMPRESION DEL ENCABEZADO
+
+*>>>>RECORRIDO DE REGISTROS
+       SELECT DES
+       DES->(DBGOTOP())
+       DO WHILE .NOT. DES->(EOF())
+
+**********IMPRESION DE LA LINEA DE ESTADO
+	    LineaEstados('CODIGO:'+DES->cCodigoEst+' '+;
+			 'REGISTROS: '+DES->(STR(RECNO(),5))+'/'+;
+				       DES->(STR(RECCOUNT(),5)),cNomSis)
+**********FIN IMPRESION DE LA LINEA DE ESTADO
+
+***********BUSQUEDA DEL CODIGO DEL ESTUDIANTE
+		cNalias := ''
+	     cNombreTes := ' ALUMNO NO EXISTE'+SPACE(50)
+
+	     IF lSekCodMae(DES->cCodigoEst,cMaeAlu,@cNalias,.F.)
+
+		cNombreTes := RTRIM(&cNalias->cApelliEst)+' '+;
+				    &cNalias->cNombreEst
+		cCodigoTgr := &cNalias->cCodigoGru
+
+	     ELSE
+
+		cNombreTes := RTRIM(DES->cApelliEst)+' '+;
+				    DES->cNombreEst
+		cCodigoTgr := SPACE(04)
+
+	     ENDIF
+	     cNombreTes := SUBS(cNombreTes+SPACE(30),1,30)
+	     lHayPag := lLocPagMat(DES->cCodigoEst,13,.F.)
+***********FIN BUSQUEDA DEL CODIGO DEL ESTUDIANTE
+
+***********ANALISIS DE LA FECHA DE PAGO
+	     IF lPrnFec
+
+		IF lHayPag
+
+		   IF (PAG->dFecPagPag < dFecIni  .OR.;
+		       PAG->dFecPagPag > dFecFin)
+
+		       DES->(DBSKIP())
+		       LOOP
+
+		   ENDIF
+
+		ELSE
+		   DES->(DBSKIP())
+		   LOOP
+		ENDIF
+
+	     ENDIF
+***********FIN ANALISIS DE LA FECHA DE PAGO
+
+***********ACUMULACION DEL TIPO DE DESCUENTO
+	     lHayErr := .F.
+	     aVlrCon := {}
+
+	     DO CASE
+	     CASE DES->nTipDesDes == 1  // Descuento
+
+		  nTotDes += DES->nValorDes
+		  VlrConDes(DES->nValorDes,aVlrCon)
+
+		  SumArrCon(aTotDes,aVlrCon)
+
+	     CASE DES->nTipDesDes == 2  // Recargo
+
+		  nTotRec += DES->nValorDes
+		  VlrConDes(DES->nValorDes,aVlrCon)
+
+		  SumArrCon(aTotRec,aVlrCon)
+
+	     CASE DES->nTipDesDes == 4  // Pago Parcial
+
+		  nTotPag += DES->nValorDes
+		  VlrConDes(DES->nValorDes,aVlrCon)
+
+		  SumArrCon(aTotPag,aVlrCon)
+	     ENDCASE
+***********FIN ACUMULACION DEL TIPO DE DESCUENTO
+
+***********IMPRESION DE LA NOVEDAD
+	     aRegPrn := {}
+	     AADD(aRegPrn,DES->cCodigoEst)
+	     AADD(aRegPrn,cCodigoTgr)
+	     AADD(aRegPrn,cNombreTes)
+	     IF lHayPag .AND. DES->cCodigoEst == PAG->cCodigoEst
+		AADD(aRegPrn,cFecha(PAG->dFecPagPag))
+	     ELSE
+		AADD(aRegPrn,'')
+	     ENDIF
+	     AADD(aRegPrn,cTxtTem+DES->cDescriDes)
+	     AADD(aRegPrn,cTipDes())
+	     AADD(aRegPrn,TRANS(DES->nValorDes,'@Z ####,###,###'))
+
+	     IF LEN(aVlrCon) >= 1
+		AADD(aRegPrn,aVlrCon[1,2])
+		AADD(aRegPrn,TRANS(aVlrCon[1,3],'@Z ####,###,###'))
+	     ELSE
+		IF EMPTY(aVlrCon)
+		   AADD(aRegPrn,'?')
+		   AADD(aRegPrn,'?')
+		ELSE
+		   AADD(aRegPrn,'error')
+		   AADD(aRegPrn,'error')
+		ENDIF
+	     ENDIF
+	   *ÀImpresi¢n del Primer Concepto
+
+	     cTxtPrn := cRegPrint(aRegPrn,aNroCol)
+	     IF lHayErr
+		cTxtPrn += '?revisar'
+	     ELSE
+		cTxtPrn += IF(DES->nValorDes # nSuma(aVlrCon,3),'?REVISAR','')
+	     ENDIF
+	     lPrnOpc(lShared,nOpcPrn,FilePrn,nHanXml,01,nColCab,;
+		     aTitPrn,aRegPrn,aNroCol,bPagina,bDerAut,bCabeza)
+***********FIN IMPRESION DE LA NOVEDAD
+
+***********IMPRESION DE LOS RESTANTES CONCEPTOS DESCRIMINADOS
+	     IF LEN(aVlrCon) > 1
+		FOR i := 2 TO LEN(aVlrCon)
+		    aRegPrn := {'','','','','','','',;
+				aVlrCon[i,2],;
+				TRANS(aVlrCon[i,3],'@Z ####,###,###')}
+
+		    cTxtPrn := cRegPrint(aRegPrn,aNroCol)
+		    lPrnOpc(lShared,nOpcPrn,FilePrn,nHanXml,01,nColCab,;
+			    aTitPrn,aRegPrn,aNroCol,bPagina,bDerAut,bCabeza)
+		ENDFOR
+	     ENDIF
+***********FIN IMPRESION DE LOS RESTANTES CONCEPTOS DESCRIMINADOS
+
+
+	  DES->(DBSKIP())
+
+       ENDDO
+*>>>>FIN RECORRIDO DE REGISTROS
+
+*>>>>IMPRESION DERECHOS
+       EVAL(bDerAut)
+      *Derechos de Autor
+
+       @ PROW()-PROW(),00 SAY ' '
+      *Saca la ultima linea
+*>>>>FIN IMPRESION DERECHOS
+
+*>>>>IMPRESION ENCABEZADO DEL RESUMEN
+       aNroCol := {18,12,16,12}
+       aRegPrn := {'RESUMEN','TOTAL ','CONCEPTO','TOTAL'}
+
+       cTxtPrn := cRegPrint(aRegPrn,aNroCol)
+       lPrnReg(01,00,cTxtPrn,bPagina,bDerAut,bCabeza)
+*>>>>FIN IMPRESION ENCABEZADO DEL RESUMEN
+
+
+*>>>>TOTAL DESCUENTOS
+       aRegPrn := {}
+       IF nTotDes # 0
+	  AADD(aRegPrn,'DESCUENTOS')
+	  AADD(aRegPrn,TRANS(nTotDes,"$###,###,###"))
+
+	  IF LEN(aTotDes) >= 1
+	     AADD(aRegPrn,aTotDes[1,2])
+	     AADD(aRegPrn,TRANS(aTotDes[1,3],'@Z ####,###,###'))
+	  ELSE
+	     IF EMPTY(aTotDes)
+		AADD(aRegPrn,'?')
+		AADD(aRegPrn,'?')
+	     ELSE
+		AADD(aRegPrn,'error')
+		AADD(aRegPrn,'error')
+	     ENDIF
+	  ENDIF
+
+	  cTxtPrn := cRegPrint(aRegPrn,aNroCol)+;
+		     IF(nTotDes # nSuma(aTotDes,3),'?REVISAR','')
+	  lPrnReg(01,00,cTxtPrn,bPagina,bDerAut,bCabeza)
+
+	  IF LEN(aTotDes) > 1
+	     FOR i := 2 TO LEN(aTotDes)
+		 aRegPrn := {'','',;
+			     aTotDes[i,2],;
+			     TRANS(aTotDes[i,3],'@Z ####,###,###')}
+		 cTxtPrn := cRegPrint(aRegPrn,aNroCol)
+		 lPrnReg(01,00,cTxtPrn,bPagina,bDerAut,bCabeza)
+	     ENDFOR
+	  ENDIF
+
+       ENDIF
+*>>>>FIN TOTAL DESCUENTOS
+
+*>>>>TOTAL RECARGOS
+       aRegPrn := {}
+       IF nTotRec # 0
+
+	  AADD(aRegPrn,'RECARGOS')
+	  AADD(aRegPrn,TRANS(nTotRec,"$###,###,###"))
+
+	  IF LEN(aTotRec) >= 1
+	     AADD(aRegPrn,aTotRec[1,2])
+	     AADD(aRegPrn,TRANS(aTotRec[1,3],'@Z ####,###,###'))
+	  ELSE
+	     IF EMPTY(aTotRec)
+		AADD(aRegPrn,'?')
+		AADD(aRegPrn,'?')
+	     ELSE
+		AADD(aRegPrn,'error')
+		AADD(aRegPrn,'error')
+	     ENDIF
+	  ENDIF
+
+	  cTxtPrn := cRegPrint(aRegPrn,aNroCol)+;
+		     IF(nTotRec # nSuma(aTotRec,3),'?REVISAR','')
+
+	  lPrnReg(01,00,cTxtPrn,bPagina,bDerAut,bCabeza)
+
+	  IF LEN(aTotRec) > 1
+	     FOR i := 2 TO LEN(aTotRec)
+		 aRegPrn := {'','',;
+			     aTotRec[i,2],;
+			     TRANS(aTotRec[i,3],'@Z ####,###,###')}
+		 cTxtPrn := cRegPrint(aRegPrn,aNroCol)
+		 lPrnReg(01,00,cTxtPrn,bPagina,bDerAut,bCabeza)
+	     ENDFOR
+	  ENDIF
+
+       ENDIF
+*>>>>FIN TOTAL RECARGOS
+
+*>>>>TOTAL PAGO PARCIAL
+       aRegPrn := {}
+       IF nTotPag # 0
+
+	  AADD(aRegPrn,'PAGO PARCIAL')
+	  AADD(aRegPrn,TRANS(nTotPag,"$###,###,###"))
+
+	  IF LEN(aTotPag) >= 1
+	     AADD(aRegPrn,aTotPag[1,2])
+	     AADD(aRegPrn,TRANS(aTotPag[1,3],'@Z ####,###,###'))
+	  ELSE
+	     IF EMPTY(aTotPag)
+		AADD(aRegPrn,'?')
+		AADD(aRegPrn,'?')
+	     ELSE
+		AADD(aRegPrn,'error')
+		AADD(aRegPrn,'error')
+	     ENDIF
+	  ENDIF
+
+	  cTxtPrn := cRegPrint(aRegPrn,aNroCol)+;
+		     IF(nTotPag # nSuma(aTotPag,3),'?REVISAR','')
+	  lPrnReg(01,00,cTxtPrn,bPagina,bDerAut,bCabeza)
+
+	  IF LEN(aTotPag) > 1
+	     FOR i := 2 TO LEN(aTotPag)
+		 aRegPrn := {'','',;
+			     aTotPag[i,2],;
+			     TRANS(aTotPag[i,3],'@Z ####,###,###')}
+		 cTxtPrn := cRegPrint(aRegPrn,aNroCol)
+		 lPrnReg(01,00,cTxtPrn,bPagina,bDerAut,bCabeza)
+	     ENDFOR
+	  ENDIF
+
+       ENDIF
+*>>>>FIN TOTAL PAGO PARCIAL
+
+*>>>>IMPRESION DERECHOS
+       DerechosPrn(cNomSis,cNomEmp,PCL('n20Stan'))
+       @ PROW()-PROW(),00 SAY ' '
+      *Saca la ultima linea
+       VerPrn(nOpcPrn,FilePrn)
+
+       SET DEVICE TO SCREEN
+       RETURN NIL
+*>>>>FIN IMPRESION DERECHOS
+
 

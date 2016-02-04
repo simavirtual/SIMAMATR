@@ -47,6 +47,7 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
        #DEFINE  TAMPA34 CHR(27)+'C'+CHR(34) // P gina de 34 l¡neas
 
        LOCAL cSavPan := ''                  // Salvar Pantalla
+       LOCAL cSavLin := ''                  // Salvar Linea
        LOCAL lHayErr := .F.                 // .T. Hay Error
      *ÀVariables generales
 
@@ -95,6 +96,7 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
        LOCAL cCodigoTes := ''               // C¢digo del Estudiante
        LOCAL cNombreTes := ''               // Nombre del Estudiante
        LOCAL cCodigoTgr := ''               // C¢digo del grupo
+       LOCAL cCodigoTni := ''               // C¢digo del Grado
        LOCAL nVlrMesTpa := 0                // Valor recibo para un mes
      *ÀVariables temporales de Campo
 *>>>>FIN DECLARACION DE VARIABLES
@@ -142,9 +144,11 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
        LOCAL PathCua := ''                  // Path de Integraci¢n Cuatro
      *ÀPath de Integraci¢n
 
+       LOCAL nOpcion := 0                   // N£mero de Opci¢n.
        LOCAL cMaeAlu := ''                  // Maestros habilitados
        LOCAL cMaeAct := ''                  // Maestro Activo
        LOCAL cJorTxt := ''                  // Jornada escogida
+       LOCAL cJornad := ''                  // Jornadas habilitadas
      *ÀDetalles Acad‚micos
 
        LOCAL aParams := {}                  // Parametros Generales
@@ -160,18 +164,61 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
 		       @PathW01,@PathW02,@PathW03,@PathW04,@PathW05,;
 		       @PathW06,@PathW07,@PathW08,@PathW09,@PathW10,;
 		       @PathUno,@PathDos,@PathTre,@PathCua,;
-		       @cMaeAlu,@cMaeAct,@cJorTxt)
+		       @cMaeAlu,@cMaeAct,@cJorTxt,@cJornad)
 	  CloseAll()
 	  RETURN NIL
        ENDIF
        CloseAll()
 *>>>>FIN LECTURA PARAMETROS GENERALES
 
+*>>>>SELECCION DE ALUMNOS NUEVOS O ANTIGUOS
+       nOpcion := nLeeOpcion('ESTUDIANTE: '+;
+			     '1<ANTIGUO> '+;
+			     '2<A¥OS ANTERIORES 3<ABANDONAR>?',4,'1')
+
+       IF nOpcion == 3
+	  cError('SE ABANDONA EL PROCESO')
+	  CloseAll()
+	  RETURN NIL
+       ENDIF
+*>>>>FIN SELECCION DE ALUMNOS NUEVOS O ANTIGUOS
+
+*>>>>LECTURA Y VALIDACION DEL A¥O
+       IF nOpcion == 2 // A¥OS ANTERIORES
+
+	  cSavPan := SAVESCREEN(0,0,24,79)
+	  cAnoAnt := SPACE(04)
+	  @ nFilInf+1,nColInf SAY 'A¥O:' GET cAnoAnt PICT '9999'
+	  READ
+	  RESTSCREEN(0,0,24,79,cSavPan)
+
+	  IF EMPTY(cAnoAnt)
+	     cError('SE ABANDONA EL PROCESO')
+	     CloseAll()
+	     RETURN NIL
+	  ENDIF
+
+	  MaeHab(lShared,nModCry,;
+		 cAnoAnt+'.'+cIniJor(SUBS(cJornad,1,1))+'\'+;
+		 fMtrAno+cAnoAnt+ExtFile,;
+		 @cMaeAlu,@cJornad,'ANO->cMaeHabAno','ANO->cJorHabAno')
+       *ÀMaestros habilitados.
+
+       ENDIF
+*>>>>FIN LECTURA Y VALIDACION DEL A¥O
+
 *>>>>SELECION DEL A¥O ANTERIOR
-       cAnoAnt := STR((VAL(cAnoUsr)-1),4)
-       cPatAnt := cPatSis
-       cPatAnt := STUFF(cPatAnt,1,4,cAnoAnt)
-       cPatAnt := PathUno+'\'+cPatAnt
+       IF nOpcion == 1
+	  cAnoAnt := STR((VAL(cAnoUsr)-1),4)
+	  cPatAnt := cPatSis
+	  cPatAnt := STUFF(cPatAnt,1,4,cAnoAnt)
+	  cPatAnt := PathUno+'\'+cPatAnt
+       ELSE
+	  cAnoAnt := cAnoAnt
+	  cPatAnt := cPatSis
+	  cPatAnt := STUFF(cPatAnt,1,4,cAnoAnt)
+	  cPatAnt := PathUno+'\'+cPatAnt
+       ENDIF
 *>>>>FIN SELECION DEL A¥O ANTERIOR
 
 *>>>>AREAS DE TRABAJO
@@ -506,13 +553,6 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
 	    ENDCASE
 **********FIN VALIDACION DEL ESTUDIANTE
 
-**********PREGUNTA DE DECISION
-	    IF !lPregunta('DESEA CONTINUAR? No Si')
-	       cError('NO SE IMPRIME EL RECIBO. DECIDIO NO CONTINUAR')
-	       LOOP
-	    ENDIF
-**********FIN PREGUNTA DE DECISION
-
 **********ANALISIS SI EL ESTUDIANTE ES REPITENTE
 	    IF &cNalias->lRepiteEst
 	       IF SUBS(&cNalias->cCodigoGru,1,2) == '17'
@@ -534,6 +574,30 @@ FUNCTION Matri_522(aParam1,aParam2,aParam3)
 	       cCodigoTgr += '00'
 	    ENDIF
 **********FIN ANALISIS SI EL ESTUDIANTE ES REPITENTE
+
+**********LECTURA DEL GRADO PARA A¥OS ANTERIORES
+	    cSavLin := SAVESCREEN(nFilInf+2,0,nFilInf+2,79)
+	    IF nOpcion == 2 // A¥OS ANTERIORES
+
+	       DO WHILE .T.
+		  IF !lLeeCodNiv(nFilInf+2,nColInf,@cCodigoTni,;
+			       {||lValCodNiv(cCodigoTni,cMaeAlu)})
+		     LOOP
+		  ENDIF
+		  EXIT
+	       ENDDO
+	       cCodigoTgr := cCodigoTni+'00'
+	    ENDIF
+**********FIN LECTURA DEL GRADO PARA A¥OS ANTERIORES
+
+**********PREGUNTA DE DECISION
+	    IF !lPregunta('DESEA CONTINUAR? No Si')
+	       cError('NO SE IMPRIME EL RECIBO. DECIDIO NO CONTINUAR')
+	       RESTSCREEN(nFilInf+2,0,nFilInf+2,79,cSavLin)
+	       LOOP
+	    ENDIF
+	    RESTSCREEN(nFilInf+2,0,nFilInf+2,79,cSavLin)
+**********FIN PREGUNTA DE DECISION
 
 **********VALIDACION DEL RECIBO No. 09. Bethlemitas. Barranca
 	    IF ANO->nRecNroAno == 9

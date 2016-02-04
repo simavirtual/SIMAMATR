@@ -423,6 +423,11 @@ FUNCTION RevisarDbf(aP1,lShared,nModCry,cCodSui,cNomEmp,cNomSis,;
 		 lndexar := .T.
 	      ENDIF
 
+	      IF !FILE(cPatSis+'\'+FileCmv)
+		 RESTSCREEN(0,0,24,79,cSavPan)
+		 RecuDbfCmv(lShared,nModCry,cPatSis,FileCmv)
+	      ENDIF
+
 	      IF !FILE(cPatSis+'\'+FileBan)
 		 RESTSCREEN(0,0,24,79,cSavPan)
 		 RecuDbfBan(lShared,nModCry,cPatSis,FileBan)
@@ -546,6 +551,9 @@ FUNCTION RevisarDbf(aP1,lShared,nModCry,cCodSui,cNomEmp,cNomSis,;
 
 	nActStrSib(lShared,nModCry,cPatSis,FileSib)
      *ÀActualizaci¢n del Sisben
+
+       nActStrCmv(lShared,nModCry,cPatSis,FileCmv)
+
 
        IF nActStrDes(lShared,nModCry,cPatSis,FileDes) == 0
 	  lndexar := .T.
@@ -1046,7 +1054,8 @@ FUNCTION aMenusMatr(lShared,nNroOpc,cDerech,aAyudas,cModem)
 			'5<INFORMES FACTURACION>',;
 			'6<CONCEPTOS ALUMNOS   >',;
 			'7<PAGOS EN LINEA      >',;
-			'8<DESCUENTOS/RECARGOS >'}
+			'8<DESCUENTOS/RECARGOS >',;
+			'9<CONSIGNACIONES      >'}
 
 	    aAyuda := {'Permite Facturar los recibos de los alumnos nuevos',;
 		       'Permite Facturar los recibos de los alumnos antiguos',;
@@ -1055,7 +1064,8 @@ FUNCTION aMenusMatr(lShared,nNroOpc,cDerech,aAyudas,cModem)
 		       'Permite imprimir los diferentes informes de la Facturaci¢n.',;
 		       'Permite Asignar los Conceptos de Pago Individuales al Estudiante',;
 		       'Permite generar la facturaci¢n en archivo para los pagos en linea',;
-		       'Permite aplicar descuentos o recargos indivuales'}
+		       'Permite aplicar descuentos o recargos indivuales',;
+		       'Permite imprimir recibos para hacer consignaciones'}
 
        CASE nNroOpc == 6
 
@@ -1532,6 +1542,7 @@ FUNCTION SubMenus(aP1,;
 		 CASE nNroOpc == 5
 		      Matri_405(aP1,aP2,aP3)
 		    *Grabaci¢n de Contratantes
+
 		 ENDCASE
 
 	    CASE nOpcPal == 5
@@ -1569,6 +1580,10 @@ FUNCTION SubMenus(aP1,;
 		 CASE nNroOpc == 8
 		      MantenDes(aP1,aP2,aP3)
 		    *ÀDescuentos Individuales
+
+		 CASE nNroOpc == 9
+		      Matri_509(aP1,aP2,aP3)
+		    *ÀFacturaci¢n - Consignaciones
 
 		 ENDCASE
 

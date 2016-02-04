@@ -97,11 +97,16 @@ FUNCTION CreaDbfAdm(lShared,PathAdm,FileAdm,lIntUno,fNtxAdm,aStrDbf)
        AADD(aDbfStr,{"lSexFemEst","Logical"  ,01,0}) // .T. Sexo Femenino .F. Sexo Masculino
        AADD(aDbfStr,{"cNomEpsEst","Character",30,0}) // Nombre de la Eps del Estudiante
        AADD(aDbfStr,{"cGrupRhEst","Character",04,0}) // Nombre de la Eps del Estudiante
+       AADD(aDbfStr,{"cViveCoEst","Character",40,0}) // *Estudiante vive con.
+       AADD(aDbfStr,{"nNroHerEst","Numeric"  ,02,0}) // *N£mero de Hermanos.
+       AADD(aDbfStr,{"cHerGruEst","Character",40,0}) // *Grupo de los Hermanos
      *ÀInformaci¢n personal
 
        AADD(aDbfStr,{"cDireccEst","Character",100,0}) // Direcci¢n del Estudiante
-       AADD(aDbfStr,{"cBarrioEst","Character",16,0}) // Barrio de la Residencia
-       AADD(aDbfStr,{"cCiudadEst","Character",30,0}) // Ciudad del Estudiante
+       AADD(aDbfStr,{"cBarrioEst","Character",16,0})  // Barrio de la Residencia
+       AADD(aDbfStr,{"cCiudadEst","Character",30,0})  // Ciudad del Estudiante
+       AADD(aDbfStr,{"cLocaliEst","Character",30,0})  // *Localidad.
+       AADD(aDbfStr,{"cZonaDiEst","Character",30,0})  // *Zona de la Direcci¢n.
      *ÀDireccion del Estudiante
 
        AADD(aDbfStr,{"cTelefnEst","Character",14,0}) // Telefono del Estudiante

@@ -1542,6 +1542,7 @@ FUNCTION SubMenus(aP1,;
 		 CASE nNroOpc == 5
 		      Matri_405(aP1,aP2,aP3)
 		    *Grabaci¢n de Contratantes
+
 		 ENDCASE
 
 	    CASE nOpcPal == 5

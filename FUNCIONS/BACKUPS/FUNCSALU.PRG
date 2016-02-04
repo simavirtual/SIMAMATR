@@ -118,6 +118,12 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cCodFamEst","Character",060,0}) // C¢digo de Estudiantes de los familiares
      *ÀDatos del Estudiante
 
+       AADD(aDbfAlu,{"cViveCoEst","Character",40,0}) // *Estudiante vive con.
+       AADD(aDbfAlu,{"nNroHerEst","Numeric"  ,02,0}) // *N£mero de Hermanos.
+       AADD(aDbfAlu,{"cHerGruEst","Character",40,0}) // *Grupo de los Hermanos
+       AADD(aDbfAlu,{"cLocaliEst","Character",30,0}) // *Localidad.
+       AADD(aDbfAlu,{"cZonaDiEst","Character",30,0}) // *Zona de la Direcci¢n.
+
        AADD(aDbfAlu,{"nTotFacEst","Numeric",12,2})    // Total Facturado
        AADD(aDbfAlu,{"nTotPagEst","Numeric",12,2})    // Total Pagado
 
@@ -701,171 +707,6 @@ FUNCTION lUseMaeMtr(lShared,cPatSis,cMaeAlu,cAnoSis,lAnoAct,lUseNtx)
        ENDIF
        RETURN .T.
 *>>>>FIN SELECION DE LAS AREAS DE TRABAJO
-
-/*************************************************************************
-* TITULO DEL PROGRAMA..: ENCONTRAR CODIGO DEL ESTUDIANTE                 *
-**************************************************************************
-
-AUTOR: Nelson Fern ndez G¢mez       FECHA DE CREACION: FEB 03/96 SAB A
-       Colombia, Bucaramanga        INICIO: 01:45 PM   FEB 03/96 SAB
-
-OBJETIVOS:
-
-1- Permite encontrar el c¢digo del estudiante dentro de los maestros
-   habilitados
-
-2- Retorna por referencia los param‚tros de la funci¢n marcados con @
-
-3- Retorna .T. si encontro el c¢digo
-
-SINTAXIS:
-
-*------------------------------------------------------------------------*
-*                              PROGRAMA                                  *
-*------------------------------------------------------------------------*/
-
-FUNCTION lCodMaeMtr(cCodEst,cMaeAlu,cNalias,lAnoAct,lMensaj)
-
-*>>>>PARAMETROS DE LA FUNCION
-/*     cCodEst			            // C¢digo del Alumno
-       cMaeAlu                              // Maestros Habilitados
-       cNalias                              // Alias del maestro del alumno
-       lAnoAct                              // A¤o Actual
-       lMensaj                              // .T. Mostrar Mensaje */
-*>>>>FIN PARAMETROS DE LA FUNCION
-
-*>>>>DECLARACION DE VARIABLES
-       LOCAL  cAlias := ''                  // Alias del maestro
-       LOCAL lExiste := .F.                 // .T. Existe el c¢digo
-*>>>>FIN DECLARACION DE VARIABLES
-
-
-*>>>>VALIDACION DEL CODIGO
-       cNalias := NIL
-       lAnoAct := IF(lAnoAct == NIL,.T.,lAnoAct)
-
-       IF 'GUA' $ cMaeAlu
-
-	   lExiste := .F.
-	    cAlias := IF(lAnoAct,'GUA','GAN')
-	   SELECT &cAlias
-	   IF DBSEEK(cCodEst)
-	      cNalias := cAlias
-	      lExiste := .T.
-	   ENDIF
-       ENDIF
-
-       IF 'JAR' $ cMaeAlu
-
-	   lExiste := .F.
-	    cAlias := IF(lAnoAct,'JAR','JAA')
-	   SELECT &cAlias
-	   IF DBSEEK(cCodEst)
-	      cNalias := cAlias
-	      lExiste := .T.
-	   ENDIF
-       ENDIF
-
-
-       IF 'PRI' $ cMaeAlu .AND. !lExiste
-
-	   lExiste := .F.
-	    cAlias := IF(lAnoAct,'PRI','PRA')
-	   SELECT &cAlias
-	   IF DBSEEK(cCodEst)
-	      cNalias := cAlias
-	      lExiste := .T.
-	   ENDIF
-       ENDIF
-
-
-       IF 'BTO' $ cMaeAlu .AND. !lExiste
-
-	  lExiste := .F.
-	   cAlias := IF(lAnoAct,'BTO','BTA')
-	  SELECT &cAlias
-	  IF DBSEEK(cCodEst)
-	     cNalias := cAlias
-	     lExiste := .T.
-	  ENDIF
-       ENDIF
-
-
-       lMensaj := IF(lMensaj == NIL,.T.,lMensaj)
-       IF !lExiste .AND. lMensaj
-	  cError('EL CODIGO: '+cCodEst+' NO EXISTE')
-       ENDIF
-       RETURN lExiste
-*>>>>FIN VALIDACION DEL CODIGO
-
-/*************************************************************************
-* TITULO DE LA FUNCION..: LECTURA DEL CODIGO DEL ESTUDIANTE              *
-**************************************************************************
-
-AUTOR: Nelson Fern ndez G¢mez       FECHA DE CREACION: FEB 03/96 SAB A
-       Colombia, Bucaramanga        INICIO: 01:50 PM   FEB 03/96 SAB
-
-OBJETIVOS:
-
-1- Deben estar en uso los maestros habilitados
-
-2- Lee y valida el c¢digo del Estudiante de cualquier maestro
-
-3- Retorna por referencia los param‚tros de la funci¢n marcados con @
-
-4- Retorna el c¢digo del estudiante
-
-SINTAXIS:
-
-*------------------------------------------------------------------------*
-*                              PROGRAMA                                  *
-*------------------------------------------------------------------------*/
-
-FUNCTION cCodEstMtr(nNroFil,nNroCol,cMaeAlu,cMaeAct,lAnoAct)
-
-*>>>>PARAMETROS DE LA FUNCION
-/*     nNroFil                              // N£mero de la fila
-       nNroCol                              // N£mero de la Columna
-       cMaeAlu                              // Meaestro Habilitados
-       cMaeAct			            // @Alias del maestro
-       lAnoAct                              // A¤o Actual */
-*>>>>FIN PARAMETROS DE LA FUNCION
-
-*>>>>DECLARACION DE VARIABLES
-       LOCAL GetList := {}                  // Variable del sistema
-
-       LOCAL cCodigoTes := ''               // C¢digo del estudiante
-       LOCAL cNombreTes := ''               // Nombre del estudiante
-*>>>>FIN DECLARACION DE VARIABLES
-
-*>>>>CAPTURA Y VALIDACION DEL CODIGO
-       lAnoAct := IF(lAnoAct == NIL,.T.,lAnoAct)
-       DO WHILE .T.
-
-**********CAPTURA DEL CODIGO
-	    cCodigoTes := SPACE(06)
-	    @ nNroFil,nNroCol GET cCodigoTes PICT '999999';
-				  VALID lCorrecion(@cCodigoTes) .AND.;
-					HelpRead();
-				  WHEN  {||HelpRead('POR FAVOR INGRESE EL '+;
-						    'CODIGO DEL ESTUDIANTE')}
-	    READ
-	    IF EMPTY(cCodigoTes)
-	       EXIT
-	    ENDIF
-**********FIN CAPTURA DEL CODIGO
-
-**********VALIDACION EXISTENCIA DEL CODIGO
-	    IF !lCodMaeMtr(cCodigoTes,cMaeAlu,@cMaeAct,lAnoAct)
-	       cMaeAct := NIL
-	       LOOP
-	    ENDIF
-	    EXIT
-**********FIN VALIDACION EXISTENCIA CODIGO
-
-       ENDDO
-       RETURN cCodigoTes
-*>>>>FIN CAPTURA Y VALIDACION DEL CODIGO
 
 /*************************************************************************
 * TITULO DE LA FUNCION..: SELECCION SELECION DEL ALIAS POR EL GRUPO      *
@@ -1871,6 +1712,12 @@ FUNCTION lDatosEst(lShared,nFilInf,nColInf,cMaeAct,;
        LOCAL cNomEpsTes := ''               // Nombre de la Eps
        LOCAL cGrupRhTes := ''               // Grupo Sanguineo
 
+       LOCAL cViveCoTes := ''               // *Estudiante vive con.
+       LOCAL nNroHerTes := ''               // *N£mero de Hermanos.
+       LOCAL cHerGruTes := ''               // *Grupo de los Hermanos
+       LOCAL cLocaliTes := ''               // *Localidad.
+       LOCAL cZonaDiTes := ''               // *Zona de la Direcci¢n.
+
        LOCAL cApePadTes := ''               // Apellido del padre
        LOCAL cNomPadTes := ''		    // Nombre del padre
        LOCAL lPadQepTes := .F.              // Fallecido
@@ -1998,6 +1845,13 @@ FUNCTION lDatosEst(lShared,nFilInf,nColInf,cMaeAct,;
 	       cGrupRhTes := &cMaeAct->cGrupRhEst
 	     *ÀInformaci¢n Personal
 
+	       cViveCoTes := &cMaeAct->cViveCoEst
+	       nNroHerTes := &cMaeAct->nNroHerEst
+	       cHerGruTes := &cMaeAct->cHerGruEst
+	       cLocaliTes := &cMaeAct->cLocaliEst
+	       cZonaDiTes := &cMaeAct->cZonaDiEst
+	     *ÀInformaci¢n Personal
+
 	       cApePadTes := &cMaeAct->cApePadEst
 	       cNomPadTes := &cMaeAct->cNomPadEst
 	       lPadQepTes := &cMaeAct->lPadQepEst
@@ -2123,6 +1977,22 @@ FUNCTION lDatosEst(lShared,nFilInf,nColInf,cMaeAct,;
 
 		   @nNroFil++,nNroCol+53 SAY 'GRUPO RH :';
 					 GET cGrupRhTes PICT "@X"
+
+		   IF .T.
+		      @nNroFil++,nNroCol+00 SAY 'VIVE CON :';
+					    GET cViveCoTes PICT "@!"
+
+		      @nNroFil  ,nNroCol+00 SAY 'No.HERMANOS :';
+					    GET nNroHerTes PICT "99"
+		      @nNroFil++,nNroCol+17 SAY 'CURSOS :';
+					    GET cHerGruTes PICT "@X"
+
+		      @nNroFil++,nNroCol+00 SAY 'LOCALIDAD:';
+					    GET cLocaliTes PICT "@!"
+
+		      @nNroFil++,nNroCol+00 SAY 'ZONA:';
+					    GET cZonaDiTes PICT "@!"
+		   ENDIF
 *----------------FIN INFORMACION PERSONAL
 
 	    CASE nNroOpc == 2
@@ -2437,6 +2307,12 @@ FUNCTION lDatosEst(lShared,nFilInf,nColInf,cMaeAct,;
 			 REPL &cMaeAct->cMaiEstEst WITH LOWER(cMaiEstTes)
 			 REPL &cMaeAct->cNomEpsEst WITH cNomEpsTes
 			 REPL &cMaeAct->cGrupRhEst WITH cGrupRhTes
+
+			 REPL &cMaeAct->cViveCoEst WITH cViveCoTes
+			 REPL &cMaeAct->nNroHerEst WITH nNroHerTes
+			 REPL &cMaeAct->cHerGruEst WITH cHerGruTes
+			 REPL &cMaeAct->cLocaliEst WITH cLocaliTes
+			 REPL &cMaeAct->cZonaDiEst WITH cZonaDiTes
 *----------------------FIN GRABACION DE LA INFORMACION PERSONAL
 
 		  CASE nNroOpc == 2

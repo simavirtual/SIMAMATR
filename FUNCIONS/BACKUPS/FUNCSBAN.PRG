@@ -56,6 +56,7 @@ FUNCTION CreaDbfBan(lShared,nModCry,PathBan,FileBan,fNtxBan,aStrDbf)
 			 {"cNombreBan","Character",20,0},; // Nombre del Banco
 			 {"cLugarBan" ,"Character",16,0},; // Lugar del Banco
 			 {"cNroCtaBan","Character",20,0},; // N£mero de la Cuenta
+			 {"cValCtaBan","Character",20,0},; // N£mero de la Cuenta a validar
 			 {"cEanCtaBan","Character",13,0},; // C¢digo EAN-13 de la Empresa
 			 {"nCodEstBan","Numeric"  ,03,0},; // Posici¢n archivo plano del c¢digo del Estudiante
 			 {"nLenRefBan","Numeric"  ,03,0},; // Posici¢n archivo plano de la longitud del C¢digo de la Referencia.
@@ -392,7 +393,11 @@ FUNCTION oDefBrwBan(lShared,nFilSup,nColSup,nFilInf,nColInf)
        oBrwBan:ADDCOLUMN(oColumn)
      *ÀDefinici¢n Columna
 
-
+       oColumn	     := TBCOLUMNNEW('NRO CUENTA;A VALIDAR', {||BAN->cValCtaBan})
+       oColumn:Cargo := {{'MODI',.T.},{'ALIAS','BAN'},{'FIELD','cValCtaBan'},;
+			 {'PICTURE','@!'}}
+       oBrwBan:ADDCOLUMN(oColumn)
+     *ÀDefinici¢n Columna
 
        oColumn	     := TBCOLUMNNEW('POSICION;REFERENCIA1', {||BAN->nCodEstBan})
        oColumn:Cargo := {{'MODI',.T.},{'ALIAS','BAN'},{'FIELD','nCodEstBan'},;

@@ -465,6 +465,12 @@ FUNCTION lHojaVida(lShared,nFilInf,nColInf,cNroIns,;
        LOCAL cNomEpsTes := ''               // Nombre de la Eps
        LOCAL cGrupRhTes := ''               // Grupo Sanguineo
 
+       LOCAL cViveCoTes := ''               // *Estudiante vive con.
+       LOCAL nNroHerTes := ''               // *N£mero de Hermanos.
+       LOCAL cHerGruTes := ''               // *Grupo de los Hermanos
+       LOCAL cLocaliTes := ''               // *Localidad.
+       LOCAL cZonaDiTes := ''               // *Zona de la Direcci¢n.
+
        LOCAL cApePadTes := ''               // Apellido del padre
        LOCAL cNomPadTes := ''		    // Nombre del padre
        LOCAL lPadQepTes := .F.              // Fallecido
@@ -610,6 +616,13 @@ FUNCTION lHojaVida(lShared,nFilInf,nColInf,cNroIns,;
 	       cGrupRhTes := ADM->cGrupRhEst
 	     *ÀImformaci¢n Personal
 
+	       cViveCoTes := ADM->cViveCoEst
+	       nNroHerTes := ADM->nNroHerEst
+	       cHerGruTes := ADM->cHerGruEst
+	       cLocaliTes := ADM->cLocaliEst
+	       cZonaDiTes := ADM->cZonaDiEst
+	     *ÀImformaci¢n Personal
+
 	       cApePadTes := ADM->cApePadEst
 	       cNomPadTes := ADM->cNomPadEst
 	       lPadQepTes := ADM->lPadQepEst
@@ -737,6 +750,22 @@ FUNCTION lHojaVida(lShared,nFilInf,nColInf,cNroIns,;
 
 		   @nNroFil++,nNroCol+53 SAY 'GRUPO RH :';
 					 GET cGrupRhTes PICT "@X"
+
+		   IF .T.
+		      @nNroFil++,nNroCol+00 SAY 'VIVE CON :';
+					    GET cViveCoTes PICT "@!"
+
+		      @nNroFil  ,nNroCol+00 SAY 'No.HERMANOS :';
+					    GET nNroHerTes PICT "99"
+		      @nNroFil++,nNroCol+17 SAY 'CURSOS :';
+					    GET cHerGruTes PICT "@X"
+
+		      @nNroFil++,nNroCol+00 SAY 'LOCALIDAD:';
+					    GET cLocaliTes PICT "@!"
+
+		      @nNroFil++,nNroCol+00 SAY 'ZONA:';
+					    GET cZonaDiTes PICT "@!"
+		   ENDIF
 *----------------FIN INFORMACION PERSONAL
 
 	    CASE nNroOpc == 2
@@ -1037,6 +1066,12 @@ FUNCTION lHojaVida(lShared,nFilInf,nColInf,cNroIns,;
 			 REPL ADM->cMaiEstEst WITH cMaiEstTes
 			 REPL ADM->cNomEpsEst WITH cNomEpsTes
 			 REPL ADM->cGrupRhEst WITH cGrupRhTes
+
+			 REPL ADM->cViveCoEst WITH cViveCoTes
+			 REPL ADM->nNroHerEst WITH nNroHerTes
+			 REPL ADM->cHerGruEst WITH cHerGruTes
+			 REPL ADM->cLocaliEst WITH cLocaliTes
+			 REPL ADM->cZonaDiEst WITH cZonaDiTes
 *----------------------FIN GRABACION DE LA INFORMACION PERSONAL
 
 		  CASE nNroOpc == 2

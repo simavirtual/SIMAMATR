@@ -481,15 +481,17 @@ FUNCTION PrnMatApel(lShared,PathUno,cNomEmp,cNomSis,cNomUsr,cAnoUsr,;
 
 ***********RECORRIDO DE ESTUDIANTES
 	     SELECT &cMaeAct
+
 	     DBGOTOP()
 	     DO WHILE .NOT. EOF()
 
 *===============IMPRESION DE LA LINEA DE ESTADO
 		  SET DEVICE TO SCREEN
-		  LineaEstados('REGISTRO No. '+STR(RECNO(),4)+'/'+;
+		  LineaEstados('REGISTRO No. '+cMaeAct+':'+STR(RECNO(),4)+'/'+;
 				STR(RECCOUNT(),4),cNomSis)
 		  SET DEVICE TO PRINT
 *===============FIN IMPRESION DE LA LINEA DE ESTADO
+
 
 *===============ANALISIS DE DECISION
 		  lHayErr := .F.

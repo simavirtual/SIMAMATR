@@ -86,6 +86,8 @@ FUNCTION Matri_601(aParam1,aParam2,aParam3,;
        LOCAL cNivel  := ''                  // Nivel
        LOCAL cColegi := ''                  // Nombre del Colegio
        LOCAL cCiudad := ''                  // Ciudad del Colegio
+       LOCAL nMesIni := 0                   // Mes Inicial
+       LOCAL lPagRec := .F.                 // .T. Pago el recibo
 
        LOCAL cCodigoTes := ''               // C¢digo del Estudiante
        LOCAL cCodigoTni := ''               // Codigo del nivel
@@ -457,6 +459,65 @@ FUNCTION Matri_601(aParam1,aParam2,aParam3,;
 	    cNombreTes := ALLTRIM(RTRIM(&cNalias->cApelliEst)+' '+;
 				  &cNalias->cNombreEst)
 **********FIN CAPTURA DEL CODIGO DEL ESTUDIANTE
+
+**********PREPARACION DE LAS VARIABLES DE ARCHIVOS
+	    FileCli := PathDos+'\'+cAnoAnt+'.'+cIniJor(SUBS(cJornad,1,1))+;
+		       '\CLIENTES\CL'+;
+		       &cNalias->cCodigoGru+SUBS(cAnoAnt,3,2)+ExtFile
+
+	    FilePag := PathDos+'\'+cAnoAnt+'.'+cIniJor(SUBS(cJornad,1,1))+;
+		       '\PAGOS\PA'+;
+		       &cNalias->cCodigoGru+SUBS(cAnoAnt,3,2)+ExtFile
+**********FIN PREPARACION DE LAS VARIABLES DE ARCHIVOS
+
+**********SELECION DE LAS AREAS DE TRABAJO
+	    IF !EMPTY(PathDos) .AND. nOpcion == 2
+	       IF !lUseDbf(.T.,FileCli,'CLI',NIL,lShared,nModCry) .OR.;
+		  !lUseDbf(.T.,FilePag,'PAG',NIL,lShared,nModCry)
+		  cError('ABRIENDO EL ARCHIVO DE CLIENTES')
+		  LOOP
+	       ENDIF
+	    ENDIF
+**********FIN SELECION DE LAS AREAS DE TRABAJO
+
+/*
+
+**********PAZ Y SALVO
+	    IF !EMPTY(PathDos) .AND. nOpcion == 2
+
+	       IF !lLocCodigo('cCodigoEst','CLI',cCodigoTes)
+		  cError(cNombreTes+' NO EXISTE EN LOS '+;
+			 'CLIENTES DEL GRUPO: '+&cMaeAct->cCodigoGru)
+		  LOOP
+	       ENDIF
+
+	       IF nUltRecPag(CLI->cCodigoEst) == 0
+		  nMesIni := 0
+	       ELSE
+		  nMesIni := PAG->nMesIniPag
+	       ENDIF
+
+	       lPagRec := .T.
+	       IF lLocCodPag(cCodigoTes,nMesIni,.F.)
+
+		  lPagRec := CLI->nSdoActCli+CLI->nSdoMorCli == 0 .AND.;
+			     !EMPTY(PAG->dFecPagPag)              .AND.;
+			     (PAG->cEstadoPag == 'P' .OR.;
+			      PAG->cEstadoPag == 'A')
+	       ENDIF
+
+
+	       IF !lPagRec
+		  cError(cNombreTes+' NO esta a PAZ Y SALVO')
+		  IF !lPregunta('DESEA CONTINUAR? No Si')
+		     LOOP
+		  ENDIF
+	       ENDIF
+
+	    ENDIF
+**********FIN PAZ Y SALVO
+
+*/
 
 **********SELECCION DE COLEGIO DE PROCEDENCIA
 	    cNivPro := SUBS(&cNalias->cCodigoGru,1,2)

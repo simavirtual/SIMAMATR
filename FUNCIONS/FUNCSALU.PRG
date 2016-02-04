@@ -118,6 +118,12 @@ FUNCTION CreaDbfAlu(lShared,PathAlu,FileAlu,lIntUno,fNtxAlu,aStrDbf)
        AADD(aDbfAlu,{"cCodFamEst","Character",060,0}) // C¢digo de Estudiantes de los familiares
      *ÀDatos del Estudiante
 
+       AADD(aDbfAlu,{"cViveCoEst","Character",40,0}) // *Estudiante vive con.
+       AADD(aDbfAlu,{"nNroHerEst","Numeric"  ,02,0}) // *N£mero de Hermanos.
+       AADD(aDbfAlu,{"cHerGruEst","Character",40,0}) // *Grupo de los Hermanos
+       AADD(aDbfAlu,{"cLocaliEst","Character",30,0}) // *Localidad.
+       AADD(aDbfAlu,{"cZonaDiEst","Character",30,0}) // *Zona de la Direcci¢n.
+
        AADD(aDbfAlu,{"nTotFacEst","Numeric",12,2})    // Total Facturado
        AADD(aDbfAlu,{"nTotPagEst","Numeric",12,2})    // Total Pagado
 
@@ -1706,6 +1712,12 @@ FUNCTION lDatosEst(lShared,nFilInf,nColInf,cMaeAct,;
        LOCAL cNomEpsTes := ''               // Nombre de la Eps
        LOCAL cGrupRhTes := ''               // Grupo Sanguineo
 
+       LOCAL cViveCoTes := ''               // *Estudiante vive con.
+       LOCAL nNroHerTes := ''               // *N£mero de Hermanos.
+       LOCAL cHerGruTes := ''               // *Grupo de los Hermanos
+       LOCAL cLocaliTes := ''               // *Localidad.
+       LOCAL cZonaDiTes := ''               // *Zona de la Direcci¢n.
+
        LOCAL cApePadTes := ''               // Apellido del padre
        LOCAL cNomPadTes := ''		    // Nombre del padre
        LOCAL lPadQepTes := .F.              // Fallecido
@@ -1833,6 +1845,13 @@ FUNCTION lDatosEst(lShared,nFilInf,nColInf,cMaeAct,;
 	       cGrupRhTes := &cMaeAct->cGrupRhEst
 	     *ÀInformaci¢n Personal
 
+	       cViveCoTes := &cMaeAct->cViveCoEst
+	       nNroHerTes := &cMaeAct->nNroHerEst
+	       cHerGruTes := &cMaeAct->cHerGruEst
+	       cLocaliTes := &cMaeAct->cLocaliEst
+	       cZonaDiTes := &cMaeAct->cZonaDiEst
+	     *ÀInformaci¢n Personal
+
 	       cApePadTes := &cMaeAct->cApePadEst
 	       cNomPadTes := &cMaeAct->cNomPadEst
 	       lPadQepTes := &cMaeAct->lPadQepEst
@@ -1958,6 +1977,22 @@ FUNCTION lDatosEst(lShared,nFilInf,nColInf,cMaeAct,;
 
 		   @nNroFil++,nNroCol+53 SAY 'GRUPO RH :';
 					 GET cGrupRhTes PICT "@X"
+
+		   IF .T.
+		      @nNroFil++,nNroCol+00 SAY 'VIVE CON :';
+					    GET cViveCoTes PICT "@!"
+
+		      @nNroFil  ,nNroCol+00 SAY 'No.HERMANOS :';
+					    GET nNroHerTes PICT "99"
+		      @nNroFil++,nNroCol+17 SAY 'CURSOS :';
+					    GET cHerGruTes PICT "@X"
+
+		      @nNroFil++,nNroCol+00 SAY 'LOCALIDAD:';
+					    GET cLocaliTes PICT "@!"
+
+		      @nNroFil++,nNroCol+00 SAY 'ZONA:';
+					    GET cZonaDiTes PICT "@!"
+		   ENDIF
 *----------------FIN INFORMACION PERSONAL
 
 	    CASE nNroOpc == 2
@@ -2272,6 +2307,12 @@ FUNCTION lDatosEst(lShared,nFilInf,nColInf,cMaeAct,;
 			 REPL &cMaeAct->cMaiEstEst WITH LOWER(cMaiEstTes)
 			 REPL &cMaeAct->cNomEpsEst WITH cNomEpsTes
 			 REPL &cMaeAct->cGrupRhEst WITH cGrupRhTes
+
+			 REPL &cMaeAct->cViveCoEst WITH cViveCoTes
+			 REPL &cMaeAct->nNroHerEst WITH nNroHerTes
+			 REPL &cMaeAct->cHerGruEst WITH cHerGruTes
+			 REPL &cMaeAct->cLocaliEst WITH cLocaliTes
+			 REPL &cMaeAct->cZonaDiEst WITH cZonaDiTes
 *----------------------FIN GRABACION DE LA INFORMACION PERSONAL
 
 		  CASE nNroOpc == 2

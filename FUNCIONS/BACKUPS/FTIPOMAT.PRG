@@ -998,6 +998,10 @@ FUNCTION HojaMatr05(cCodigo,lNuevos,lRepite,nNroNiv,cNombre,cApelli,dFecNac,;
        LOCAL cTxtPrn := ''                  // Texto de impresi¢n
        LOCAL nLenPrn := 0                   // Longitud de impresi¢n
        LOCAL cCampo  := ''                  // Variable de Campo
+       LOCAL cGrado  := ''                  // Grado
+       LOCAL cAnoCol := ''                  // A¤o del Colegio
+       LOCAL cNomCol := ''                  // Nombre del Colegio
+       LOCAL cCiuCol := ''                  // Ciudad del Colegio
 *>>>>FIN DECLARACION DE VARIABLES
 
 *>>>>ACTIVACION DE LA IMPRESORA
@@ -1192,11 +1196,32 @@ FUNCTION HojaMatr05(cCodigo,lNuevos,lRepite,nNroNiv,cNombre,cApelli,dFecNac,;
 	   cCampo := &cCampo
 	   IF !EMPTY(cCampo)
 
+	      cAnoCol := SUBS(cCampo,01,04)
+	      cGrado  := SUBS(cCampo,05,10)
+	      cNomCol := SUBS(cCampo,15,40)
+	      cCiuCol := SUBS(cCampo,55,20)
 
-	      LineaPrn({SPACE(13)+SUBS(cCampo,05,10),;
-				  SUBS(cCampo,01,04),;
-				  SUBS(cCampo,15,40),;
-				  SUBS(cCampo,55,20)},1)
+
+/*
+wait 'cCampo'
+wait cCampo
+
+wait 'cAnoCol'
+wait cAnoCol
+
+wait 'cGrado'
+wait cGrado
+
+wait 'cNomCol'
+wait cNomCol
+
+wait cCiuCol
+wait cCiuCol
+*/
+
+
+
+	      LineaPrn({SPACE(13)+cGrado,cAnoCol,cNomCol,cCiuCol},1)
 
 	   ENDIF
        ENDFOR

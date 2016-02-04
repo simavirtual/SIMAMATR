@@ -76,6 +76,8 @@ FUNCTION Matri_405(aParam1,aParam2,aParam3)
        LOCAL cTelTra := ''                  // Telefono del Trabajo
        LOCAL cCiuTra := ''                  // Ciudad del Trabajo
        LOCAL cEstrat := ''                  // Estrato
+       LOCAL nMesIni := 0                   // Mes Inicial
+       LOCAL lPagRec := .F.                 // .T. Pago el recibo
 
        LOCAL GetList := {}                  // Variable del Sistema
 
@@ -266,6 +268,15 @@ FUNCTION Matri_405(aParam1,aParam2,aParam3)
        ENDIF
 *>>>>FIN VALIDACION DE CONTENIDOS DE ARCHIVOS
 
+*>>>>VERIFICACION DE INSCRIPCIONES ABIERTAS
+       IF !ANO->lHayMtrAno
+	  cError('Estan Cerradas las Matriculas para '+cAnoUsr,;
+		 '!Atenci¢n!')
+	  CLOSE ALL
+	  RETURN NIL
+       ENDIF
+*>>>>FIN VERIFICACION DE INSCRIPCIONES ABIERTAS
+
 *>>>>IMPRESION DE LOS ENCABEZADOS
        nNroFil := nMarco(nFilPal+1,'POR FAVOR DIGITE LOS CODIGOS '+;
 				   'DE LOS ESTUDIANTES ',22,'°')
@@ -322,6 +333,58 @@ FUNCTION Matri_405(aParam1,aParam2,aParam3)
 	    ENDIF
 **********FIN ANALISIS DE DECISION
 
+**********PREPARACION DE LAS VARIABLES DE ARCHIVOS
+	    FileCli := PathDos+'\'+cPatAnt+'\CLIENTES\CL'+;
+		       &cNalias->cCodigoGru+SUBS(cAnoAnt,3,2)+ExtFile
+
+	    FilePag := PathDos+'\'+cPatAnt+'\PAGOS\PA'+;
+		       &cNalias->cCodigoGru+SUBS(cAnoAnt,3,2)+ExtFile
+**********FIN PREPARACION DE LAS VARIABLES DE ARCHIVOS
+
+**********SELECION DE LAS AREAS DE TRABAJO
+	    IF !EMPTY(PathDos)  .AND. nOpcion == 2
+	       IF !lUseDbf(.T.,FileCli,'CLI',NIL,lShared,nModCry) .OR.;
+		  !lUseDbf(.T.,FilePag,'PAG',NIL,lShared,nModCry)
+		  cError('ABRIENDO EL ARCHIVO DE CLIENTES')
+		  LOOP
+	       ENDIF
+	    ENDIF
+**********FIN SELECION DE LAS AREAS DE TRABAJO
+
+**********PAZ Y SALVO
+	    IF !EMPTY(PathDos) .AND. nOpcion == 2
+
+	       IF !lLocCodigo('cCodigoEst','CLI',cCodigoTes)
+		  cError(cNombreTes+' NO EXISTE EN LOS '+;
+			 'CLIENTES DEL GRUPO: '+&cMaeAct->cCodigoGru)
+		  LOOP
+	       ENDIF
+
+	       IF nUltRecPag(CLI->cCodigoEst) == 0
+		  nMesIni := 0
+	       ELSE
+		  nMesIni := PAG->nMesIniPag
+	       ENDIF
+
+	       lPagRec := .T.
+	       IF lLocCodPag(cCodigoTes,nMesIni,.F.)
+
+		  lPagRec := CLI->nSdoActCli+CLI->nSdoMorCli == 0 .AND.;
+			     !EMPTY(PAG->dFecPagPag)              .AND.;
+			     (PAG->cEstadoPag == 'P' .OR.;
+			      PAG->cEstadoPag == 'A')
+	       ENDIF
+
+
+	       IF !lPagRec
+		  cError(cNombreTes+' NO esta a PAZ Y SALVO')
+		  IF !lPregunta('DESEA CONTINUAR? No Si')
+		     LOOP
+		  ENDIF
+	       ENDIF
+
+	    ENDIF
+**********FIN PAZ Y SALVO
 
 **********LECTURA DE LOS CONTRATANTES
 	    cSavPan := SAVESCREEN(0,0,24,79)
